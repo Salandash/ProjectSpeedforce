@@ -1,0 +1,367 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.georgewilliam.speedforce.projectspeedforce.ProfileFragment">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_placeholder"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="User Photo"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre Apellido"
+                    android:textColor="#FFFFFF"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="30sp"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="20dp"
+                    android:id="@+id/profile_nombres_apellidos_textview_id" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_editProfile_id"
+                    android:src="@drawable/img_editicon64"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="Edit Action Button" />
+
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_nombre_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Apellido"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_apellido_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Apellido"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_username_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_email_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sexo"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_sexo_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sexo"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fecha de Nacimiento"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_fechanac_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fecha de Nacimiento"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ciudad"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_ciudad_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ciudad"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Telefono"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_telefono_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Telefono"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Altura"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_altura_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Altura"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Peso"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_peso_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Peso"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B6B6" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textColor="#212121"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingStart="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="2dp"
+                android:id="@+id/profile_status_textview_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textColor="#727272"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:paddingStart="40dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="10dp" />
+
+
+
+
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GO BACK"
+                android:id="@+id/btn_finishProfile_id" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>
