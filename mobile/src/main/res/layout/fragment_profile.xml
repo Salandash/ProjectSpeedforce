@@ -274,60 +274,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Altura"
-                android:textColor="#212121"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:paddingStart="40dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="2dp"
-                android:id="@+id/profile_altura_textview_id" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Altura"
-                android:textColor="#727272"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:paddingStart="40dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="10dp" />
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#B6B6B6" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Peso"
-                android:textColor="#212121"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:paddingStart="40dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="2dp"
-                android:id="@+id/profile_peso_textview_id" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Peso"
-                android:textColor="#727272"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:paddingStart="40dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="10dp" />
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#B6B6B6" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="Status"
                 android:textColor="#212121"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"

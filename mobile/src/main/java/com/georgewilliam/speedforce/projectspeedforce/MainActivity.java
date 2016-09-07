@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
                         " ",
                         " ",
                         " ",
-                        " ",
-                        " ",
                         " "
                 );
                 break;
@@ -82,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
                                 id_usuario.getText().toString(),
                                 nombres.getText().toString(),
                                 apellidos.getText().toString(),
-                                " ",
-                                " ",
                                 " ",
                                 " ",
                                 " ",

@@ -75,18 +75,6 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/profile_edit_altura_input_id"
-                android:hint="Altura"/>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/profile_edit_peso_input_id"
-                android:hint="Peso"/>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/profile_edit_status_input_id"
                 android:hint="Status"/>
 

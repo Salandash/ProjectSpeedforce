@@ -27,7 +27,7 @@ public class ProfileFragment extends Fragment implements OnClickListener{
      * TextViews para los campos del perfil.
      */
     TextView profileLargeTextView, profileIdUsuario, profileNombres, profileApellidos, profileEmail, profileSexo, profileFechanac,
-        profileCiudad, profileTelefono, profileAltura, profilePeso, profileStatus;
+        profileCiudad, profileTelefono, profileStatus;
 
     /**
      * Helper de la base de datos.
@@ -84,8 +84,6 @@ public class ProfileFragment extends Fragment implements OnClickListener{
         profileFechanac = (TextView) view.findViewById(R.id.profile_fechanac_textview_id);
         profileCiudad = (TextView) view.findViewById(R.id.profile_ciudad_textview_id);
         profileTelefono = (TextView) view.findViewById(R.id.profile_telefono_textview_id);
-        profileAltura = (TextView) view.findViewById(R.id.profile_altura_textview_id);
-        profilePeso = (TextView) view.findViewById(R.id.profile_peso_textview_id);
         profileStatus = (TextView) view.findViewById(R.id.profile_status_textview_id);
 
         editImgButton = (ImageButton) view.findViewById(R.id.btn_editProfile_id);
@@ -103,8 +101,6 @@ public class ProfileFragment extends Fragment implements OnClickListener{
                 profileFechanac,
                 profileCiudad,
                 profileTelefono,
-                profileAltura,
-                profilePeso,
                 profileStatus);
 
         return view;

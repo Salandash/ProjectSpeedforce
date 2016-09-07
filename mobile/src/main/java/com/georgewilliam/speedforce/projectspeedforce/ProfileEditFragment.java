@@ -27,7 +27,7 @@ public class ProfileEditFragment extends Fragment implements OnClickListener {
      * Campos de los inputs de los datos del perfil.
      */
     EditText inputNombres, inputApellidos, inputEmail, inputSexo, inputFechanac, inputCiudad,
-            inputTelefono, inputAltura, inputPeso, inputStatus;
+            inputTelefono, inputStatus;
 
     /**
      * TextView para el nombre de usuario.
@@ -87,8 +87,6 @@ public class ProfileEditFragment extends Fragment implements OnClickListener {
         inputFechanac = (EditText) view.findViewById(R.id.profile_edit_fechanac_input_id);
         inputCiudad = (EditText) view.findViewById(R.id.profile_edit_ciudad_input_id);
         inputTelefono = (EditText) view.findViewById(R.id.profile_edit_telefono_input_id);
-        inputAltura = (EditText) view.findViewById(R.id.profile_edit_altura_input_id);
-        inputPeso = (EditText) view.findViewById(R.id.profile_edit_peso_input_id);
         inputStatus = (EditText) view.findViewById(R.id.profile_edit_status_input_id);
 
         labelIdUsuario = (TextView) view.findViewById(R.id.profile_edit_username_label_id);
@@ -107,8 +105,6 @@ public class ProfileEditFragment extends Fragment implements OnClickListener {
                 inputFechanac,
                 inputCiudad,
                 inputTelefono,
-                inputAltura,
-                inputPeso,
                 inputStatus);
 
         return view;
@@ -140,8 +136,6 @@ public class ProfileEditFragment extends Fragment implements OnClickListener {
                                 inputFechanac.getText().toString(),
                                 inputCiudad.getText().toString(),
                                 inputTelefono.getText().toString(),
-                                inputAltura.getText().toString(),
-                                inputPeso.getText().toString(),
                                 inputStatus.getText().toString());
                         getActivity().finish();
                     }

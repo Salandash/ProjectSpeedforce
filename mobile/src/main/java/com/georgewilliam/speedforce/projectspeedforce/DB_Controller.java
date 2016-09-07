@@ -25,17 +25,101 @@ public class DB_Controller extends SQLiteOpenHelper {
      * @param version Entero que representa la versión de la base de datos.
      */
     public DB_Controller(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, "LocalSpeedforceDB.db", factory, version);
+        super(context, "LocalDB00.db", factory, version);
     }
 
     /**
-     * Método que crea la base de datos y sus tablas.
+     * Método que crea las tablas y campos de la base de datos.
      * @param sqLiteDatabase Objeto que representa la base de datos.
      */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE TB_USUARIO(ID INTEGER PRIMARY KEY AUTOINCREMENT, ID_USUARIO TEXT UNIQUE, NOMBRES TEXT, APELLIDOS TEXT, EMAIL TEXT, SEXO TEXT, FECHANAC TEXT, CIUDAD TEXT, TELEFONO TEXT, ALTURA TEXT, PESO TEXT, STATUS TEXT);");
-        //                                                              0                          1                     2             3                4           5           6               7           8               9           10          11
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_USUARIO(ID INTEGER PRIMARY KEY AUTOINCREMENT, "//0
+                + "ID_USUARIO TEXT UNIQUE, "//1
+                + "NOMBRES TEXT, "//2
+                + "APELLIDOS TEXT, "//3
+                + "EMAIL TEXT, "//4
+                + "CONTRASENA TEXT, "//5
+                + "SEXO TEXT, "//6
+                + "FECHANACIMIENTO TEXT, "//7
+                + "ID_CIUDAD TEXT, "//8
+                + "NUMEROTELEFONO TEXT, "//9
+                + "ID_STATUS TEXT, "//10
+                + "FOTO BLOB);"//11
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_ENTRENADORES(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_ENTRENADOR TEXT UNIQUE, "
+                + "BCERTIFICADO BLOB, "
+                + "ID_USUARIO TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_CIUDADES(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_CIUDAD TEXT UNIQUE, "
+                + "DESCRIPCION TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_SESIONESENTRENAMIENTO(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_SESION TEXT UNIQUE, "
+                + "ID_ATLETA TEXT, "
+                + "ID_CONDICIONCLIMATICA TEXT, "
+                + "RITMOCARDIACOMEDIO TEXT, "
+                + "ID_RUTA TEXT, "
+                + "MOMENTOINICIO TEXT, "
+                + "MOMENTOTERMINO TEXT, "
+                + "DURACION INTEGER, "
+                + "DISTANCIARECORRIDA INTEGER);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_ATLETA(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_USUARIO TEXT UNIQUE, "
+                + "ALTURA TEXT, "
+                + "ID_ATLETA TEXT, "
+                + "PESO TEXT, "
+                + "ID_BICICLETA TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_ATLETAENTRENADOR(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_ATLETA TEXT, "
+                + "ID_ENTRENADOR TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_RUTA(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_RUTA TEXT UNIQUE, "
+                + "ID_ATLETAENTRENADOR TEXT, "
+                + "PUNTOPARTIDA TEXT, "
+                + "PUNTOTERMINO TEXT, "
+                + "ID_CIUDAD TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_BICICLETAS(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_BICICLETA TEXT UNIQUE, "
+                + "PESOKG TEXT, "
+                + "MATERIAL TEXT, "
+                + "TAMANO INTEGER, "
+                + "TAMANOGOMAS INTEGER, "
+                + "FABRICANTEGOMAS TEXT, "
+                + "FABRICANTE TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_CONDICIONCLIMATICA(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_CONDICIONCLIMATICA TEXT UNIQUE, "
+                + "DESCRIPCION TEXT, "
+                + "TEMPERATURA INTEGER, "
+                + "HUMEDAD INTEGER);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_STATUS(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_STATUS TEXT UNIQUE, "
+                + "DESCRIPCION TEXT);"
+        );
+
+        sqLiteDatabase.execSQL("CREATE TABLE TB_DATASYNC(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "ID_DATASYNC TEXT UNIQUE, "
+                + "FECHASYNC TEXT, "
+                + "ID_ATLETA TEXT);"
+        );
     }
 
     /**
@@ -47,6 +131,16 @@ public class DB_Controller extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_USUARIO");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_ENTRENADORES");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_CIUDADES");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_SESIONESENTRENAMIENTO");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_ATLETA");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_ATLETAENTRENADOR");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_RUTA");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_BICICLETAS");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_CONDICIONCLIMATICA");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_STATUS");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS TB_DATASYNC");
         onCreate(sqLiteDatabase);
     }
 
@@ -64,24 +158,20 @@ public class DB_Controller extends SQLiteOpenHelper {
      * @param fechanac Texto de la fecha de nacimiento.
      * @param ciudad Texto de la ciudad.
      * @param telefono Texto del telefono.
-     * @param altura Texto de la altura.
-     * @param peso Texto del peso.
      * @param status Texto del status.
      */
     public void insert_usuario(String id_usuario, String nombres, String apellidos, String email, String sexo, String fechanac,
-                               String ciudad, String telefono, String altura, String peso, String status) {
+                               String ciudad, String telefono, String status) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("ID_USUARIO", id_usuario);
         contentValues.put("NOMBRES", nombres);
         contentValues.put("APELLIDOS", apellidos);
         contentValues.put("EMAIL", email);
         contentValues.put("SEXO", sexo);
-        contentValues.put("FECHANAC", fechanac);
-        contentValues.put("CIUDAD", ciudad);
-        contentValues.put("TELEFONO", telefono);
-        contentValues.put("ALTURA", altura);
-        contentValues.put("PESO", peso);
-        contentValues.put("STATUS", status);
+        contentValues.put("FECHANACIMIENTO", fechanac);
+        contentValues.put("ID_CIUDAD", ciudad);
+        contentValues.put("NUMEROTELEFONO", telefono);
+        contentValues.put("ID_STATUS", status);
         this.getWritableDatabase().insertOrThrow("TB_USUARIO", "", contentValues);
     }
 
@@ -104,22 +194,18 @@ public class DB_Controller extends SQLiteOpenHelper {
      * @param fechanac Texto de la fecha de nacimiento.
      * @param ciudad Texto de la ciudad.
      * @param telefono Texto del telefono.
-     * @param altura Texto de la altura.
-     * @param peso Texto del peso.
      * @param status Texto del status.
      */
     public void update_usuario(String id_usuario, String nombres, String apellidos, String email, String sexo, String fechanac,
-                               String ciudad, String telefono, String altura, String peso, String status) {
+                               String ciudad, String telefono, String status) {
         this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET NOMBRES='"+nombres+"' WHERE ID_USUARIO='"+id_usuario+"'");
         this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET APELLIDOS='"+apellidos+"' WHERE ID_USUARIO='"+id_usuario+"'");
         this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET EMAIL='"+email+"' WHERE ID_USUARIO='"+id_usuario+"'");
         this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET SEXO='"+sexo+"' WHERE ID_USUARIO='"+id_usuario+"'");
-        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET FECHANAC='"+fechanac+"' WHERE ID_USUARIO='"+id_usuario+"'");
-        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET CIUDAD='"+ciudad+"' WHERE ID_USUARIO='"+id_usuario+"'");
-        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET TELEFONO='"+telefono+"' WHERE ID_USUARIO='"+id_usuario+"'");
-        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET ALTURA='"+altura+"' WHERE ID_USUARIO='"+id_usuario+"'");
-        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET PESO='"+peso+"' WHERE ID_USUARIO='"+id_usuario+"'");
-        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET STATUS='"+status+"' WHERE ID_USUARIO='"+id_usuario+"'");
+        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET FECHANACIMIENTO='"+fechanac+"' WHERE ID_USUARIO='"+id_usuario+"'");
+        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET ID_CIUDAD='"+ciudad+"' WHERE ID_USUARIO='"+id_usuario+"'");
+        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET NUMEROTELEFONO='"+telefono+"' WHERE ID_USUARIO='"+id_usuario+"'");
+        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET ID_STATUS='"+status+"' WHERE ID_USUARIO='"+id_usuario+"'");
     }
 
     /**
@@ -137,26 +223,6 @@ public class DB_Controller extends SQLiteOpenHelper {
         }
         cursor.close();
 
-
-        // <TB_USUARIO table rows> //
-        // 0. ID
-        // 1. ID_USUARIO
-        // 2. NOMBRES
-        // 3. APELLIDOS
-        //
-        ////////////////////
-        //
-        // 4. Email
-        // 5. Sexo
-        // 6. F.Nac.
-        // 7. Ciudad
-        // 8. Telefono
-        // 9. Altura
-        // 10. Peso
-        // 11. Estatus
-        //
-        // Foto
-        // Contrasena
     }
 
 
@@ -171,8 +237,6 @@ public class DB_Controller extends SQLiteOpenHelper {
      * @param fechanac Texto de la fecha de nacimiento.
      * @param ciudad Texto de la ciudad.
      * @param telefono Texto del telefono.
-     * @param altura Texto de la altura.
-     * @param peso Texto del peso.
      * @param status Texto del status.
      */
     public void populateProfile(TextView textNombresApellidos,
@@ -184,8 +248,6 @@ public class DB_Controller extends SQLiteOpenHelper {
                                 TextView fechanac,
                                 TextView ciudad,
                                 TextView telefono,
-                                TextView altura,
-                                TextView peso,
                                 TextView status) {
 
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM TB_USUARIO", null);
@@ -200,8 +262,6 @@ public class DB_Controller extends SQLiteOpenHelper {
         fechanac.setText("");
         ciudad.setText("");
         telefono.setText("");
-        altura.setText("");
-        peso.setText("");
         status.setText("");
 
         textNombresApellidos.append(cursor.getString(2)+" "+cursor.getString(3));
@@ -209,13 +269,11 @@ public class DB_Controller extends SQLiteOpenHelper {
         nombres.append(cursor.getString(2));
         apellidos.append(cursor.getString(3));
         email.append(cursor.getString(4));
-        sexo.append(cursor.getString(5));
-        fechanac.append(cursor.getString(6));
-        ciudad.append(cursor.getString(7));
-        telefono.append(cursor.getString(8));
-        altura.append(cursor.getString(9));
-        peso.append(cursor.getString(10));
-        status.append(cursor.getString(11));
+        sexo.append(cursor.getString(6));
+        fechanac.append(cursor.getString(7));
+        ciudad.append(cursor.getString(8));
+        telefono.append(cursor.getString(9));
+        status.append(cursor.getString(10));
 
         cursor.close();
     }
@@ -231,8 +289,6 @@ public class DB_Controller extends SQLiteOpenHelper {
      * @param fechanac Texto de la fecha de nacimiento.
      * @param ciudad Texto de la ciudad.
      * @param telefono Texto del telefono.
-     * @param altura Texto de la altura.
-     * @param peso Texto del peso.
      * @param status Texto del status.
      */
     public void populateProfileEdit(TextView id_usuario,
@@ -243,8 +299,6 @@ public class DB_Controller extends SQLiteOpenHelper {
                                     EditText fechanac,
                                     EditText ciudad,
                                     EditText telefono,
-                                    EditText altura,
-                                    EditText peso,
                                     EditText status) {
 
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM TB_USUARIO", null);
@@ -258,21 +312,17 @@ public class DB_Controller extends SQLiteOpenHelper {
         fechanac.setText("");
         ciudad.setText("");
         telefono.setText("");
-        altura.setText("");
-        peso.setText("");
         status.setText("");
 
         id_usuario.append(cursor.getString(1));
         nombres.append(cursor.getString(2));
         apellidos.append(cursor.getString(3));
         email.append(cursor.getString(4));
-        sexo.append(cursor.getString(5));
-        fechanac.append(cursor.getString(6));
-        ciudad.append(cursor.getString(7));
-        telefono.append(cursor.getString(8));
-        altura.append(cursor.getString(9));
-        peso.append(cursor.getString(10));
-        status.append(cursor.getString(11));
+        sexo.append(cursor.getString(6));
+        fechanac.append(cursor.getString(7));
+        ciudad.append(cursor.getString(8));
+        telefono.append(cursor.getString(9));
+        status.append(cursor.getString(10));
 
         cursor.close();
     }
