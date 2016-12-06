@@ -4,6 +4,9 @@
  */
 package com.georgewilliam.speedforce.projectspeedforce;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -33,5 +36,16 @@ public class ProfileActivity extends AppCompatActivity {
     }
     */
 
-
+    /*
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FragmentManager fm = this.getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment profileFragment = new ProfileFragment();
+        ft.add(profileFragment, "profile");
+        ft.attach(profileFragment);
+        ft.commit();
+    }
+    */
 }

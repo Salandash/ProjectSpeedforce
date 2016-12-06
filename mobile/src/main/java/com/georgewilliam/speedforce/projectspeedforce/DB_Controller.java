@@ -9,7 +9,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -25,7 +27,8 @@ public class DB_Controller extends SQLiteOpenHelper {
      * @param version Entero que representa la versión de la base de datos.
      */
     public DB_Controller(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, "LocalDB00.db", factory, version);
+        super(context, "LocalDB03.db", factory, version);
+        //"LocalDB03.db"
     }
 
     /**
@@ -46,7 +49,7 @@ public class DB_Controller extends SQLiteOpenHelper {
                 + "ID_CIUDAD TEXT, "//8
                 + "NUMEROTELEFONO TEXT, "//9
                 + "ID_STATUS TEXT, "//10
-                + "FOTO BLOB);"//11
+                + "FOTO TEXT);"//11
         );
 
         sqLiteDatabase.execSQL("CREATE TABLE TB_ENTRENADORES(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -209,6 +212,16 @@ public class DB_Controller extends SQLiteOpenHelper {
     }
 
     /**
+     * Inserta una imagen de perfil a la tabla de usuarios.
+     * @param id_usuario ID del usuario a cambiar foto.
+     * @param imageBitmap Bitmap que contiene la imagen de perfil.
+     */
+    public void updateProfilePicture(String id_usuario, Bitmap imageBitmap) {
+        String imageStr64 = DB_BitmapUtility.getString64FromBitmap(imageBitmap);
+        this.getWritableDatabase().execSQL("UPDATE TB_USUARIO SET FOTO='"+imageStr64+"' WHERE ID_USUARIO='"+id_usuario+"'");
+    }
+
+    /**
      * Método para listar todos los usuario de la tabla de usuario (nombre de usuario, nombres y apellidos).
      * @param txtv TextView a poblar.
      */
@@ -278,6 +291,25 @@ public class DB_Controller extends SQLiteOpenHelper {
         cursor.close();
     }
 
+    /**
+     * Obtiene la imagen de perfil del usuario de la base de datos
+     * @param image ImageView donde se carga la imagen.
+     * @return False si no hay imagen en la base de datos.
+     */
+    public boolean getProfilePicture(ImageView image) {
+
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM TB_USUARIO", null);
+        cursor.moveToFirst();
+        String imageStr64 = cursor.getString(11);
+        cursor.close();
+
+        if(imageStr64 == null)
+            return false;
+
+        Bitmap imageBitmap = DB_BitmapUtility.getBitmapFromString64(imageStr64);
+        image.setImageBitmap(imageBitmap);
+        return true;
+    }
 
     /**
      * Método para poblar la pantalla de edición de perfil.

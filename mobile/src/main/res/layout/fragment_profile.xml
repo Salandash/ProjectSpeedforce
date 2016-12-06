@@ -25,7 +25,8 @@
                     android:src="@drawable/img_placeholder"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:contentDescription="User Photo"/>
+                    android:contentDescription="User Photo"
+                    android:id="@+id/img_profile_picture_id"/>
 
                 <TextView
                     android:layout_width="wrap_content"

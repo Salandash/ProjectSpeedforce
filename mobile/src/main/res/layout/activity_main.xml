@@ -1,85 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<!-- This DrawerLayout has two children at the root  -->
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/linear"
-    android:orientation="vertical"
-    tools:context="com.georgewilliam.speedforce.projectspeedforce.MainActivity">
+    android:layout_height="match_parent">
 
-    <EditText
+    <!-- This LinearLayout represents the contents of the screen  -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/id_usuario_input"
-        android:hint="ID de Usuario"/>
+        android:layout_height="match_parent"
+        android:id="@+id/linear"
+        android:orientation="vertical"
+        tools:context="com.georgewilliam.speedforce.projectspeedforce.MainActivity">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/nombres_input"
-        android:hint="Nombres"/>
+        <!-- The ActionBar displayed at the top -->
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/apellidos_input"
-        android:hint="Apellidos"/>
+        <!-- The main content view where fragments are loaded -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ADD"
-        android:id="@+id/btn_add"
-        android:onClick="btn_click"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_usuario_input"
+                android:hint="ID de Usuario"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="DELETE"
-        android:id="@+id/btn_delete"
-        android:onClick="btn_click"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nombres_input"
+                android:hint="Nombres"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="UPDATE"
-        android:id="@+id/btn_update"
-        android:onClick="btn_click"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/apellidos_input"
+                android:hint="Apellidos"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="LIST"
-        android:id="@+id/btn_list"
-        android:onClick="btn_click"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADD"
+                android:id="@+id/btn_add"
+                android:onClick="btn_click"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PROFILE SCREEN"
-        android:id="@+id/btn_to_profile_id"
-        android:onClick="btn_click"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DELETE"
+                android:id="@+id/btn_delete"
+                android:onClick="btn_click"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="MAP SCREEN"
-        android:id="@+id/btn_to_maps_id"
-        android:onClick="btn_click"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="UPDATE"
+                android:id="@+id/btn_update"
+                android:onClick="btn_click"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LIST"
+                android:id="@+id/btn_list"
+                android:onClick="btn_click"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/largeText"
-            android:text="Hello World!"
-            android:gravity="top|center"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PROFILE SCREEN"
+                android:id="@+id/btn_to_profile_id"
+                android:onClick="btn_click"/>
 
-    </ScrollView>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MAP SCREEN"
+                android:id="@+id/btn_to_maps_id"
+                android:onClick="btn_click"/>
 
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-</LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/largeText"
+                    android:text="Hello World!"
+                    android:gravity="top|center"/>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- The navigation drawer that comes from the left -->
+    <!-- Note that `android:layout_gravity` needs to be set to 'start' -->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nvView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/white"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_view" />
+
+</android.support.v4.widget.DrawerLayout>
