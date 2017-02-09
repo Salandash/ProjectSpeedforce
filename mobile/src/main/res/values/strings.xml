@@ -22,4 +22,8 @@
     <!-- Strings related to navigation drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- Strings related to Google Maps Activity -->
+    <string name="default_info_title">Maps: Default Info Title</string>
+    <string name="default_info_snippet">Maps: Default Information Snippet</string>
 </resources>

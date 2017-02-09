@@ -200,8 +200,8 @@
     <orderEntry type="library" exported="" name="play-services-contextmanager-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-impl-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-auth-module-9.4.0" level="project" />
-    <orderEntry type="library" exported="" name="firebase-auth-common-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="design-24.1.1" level="project" />
+    <orderEntry type="library" exported="" name="firebase-auth-common-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-storage-common-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-identity-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-appindexing-9.4.0" level="project" />
