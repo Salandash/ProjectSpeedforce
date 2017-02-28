@@ -7,15 +7,36 @@
     android:layout_height="match_parent"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.MapsActivity" >
 
-    <Button
+<!--    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
+        android:layout_gravity="center|bottom"
         android:id="@+id/demo_button_id"
         android:text="Demo Button"
         android:padding="10dp"
         android:layout_marginTop="20dp"
-        android:paddingRight="10dp"
-        android:onClick="toggleSession" />
+        android:paddingBottom="10dp"
+        android:onClick="toggleSession" />-->
+
+    <Chronometer
+        android:id="@+id/chronometer_id"
+        android:textColor="#4169E1"
+        android:background="#BBBBBB"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="50dp"
+        android:text="Chronometer" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:id="@+id/start_button_id"
+        android:text="Start"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:paddingTop="10dp" />
 
 </fragment>

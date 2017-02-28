@@ -7,6 +7,8 @@ package com.georgewilliam.speedforce.projectspeedforce;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -14,7 +16,11 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.ConnectionResult;
@@ -23,8 +29,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,7 +41,19 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Clase que representa el Activity y Fragment del mapa de la aplicación móvil.
@@ -47,7 +63,8 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        View.OnClickListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
@@ -67,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements
     // A default location (Sydney, Australia) and default zoom to use when location permission is
     // not granted.
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 40; //15
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
@@ -87,6 +104,33 @@ public class MapsActivity extends FragmentActivity implements
     private int count = 0;
     private boolean isInSession = false;
     private ArrayList<Location> route = new ArrayList<Location>();
+    private Chronometer chronometer;
+    private Button startButton;
+    private JSONObject sessionJSON;
+
+    // for API calls
+    private TextView responseView;
+    private ProgressBar progressBar;
+    static final String API_URL = "http://45.55.77.201:8085/movies/json";
+
+    // to convert to session json
+    private String idSesion; //uuid
+    private String idAtleta = "WheelKing";
+    private int idCondicion = 1;
+    private double ritmoCardiacoMedio = 85.33;
+    private String idRuta; //uuid
+    private String ciudad = "Santo Domingo";
+    private String pais = "Dominican Republic";
+    //coordenadas
+    private String momentoInicio;
+    private String momentoTermino;
+    private double distanciaRecorrida = 4.71;
+    private double caloriasQuemadas = 830.65;
+    private double humedadRelativa = 5.12;
+    private double temperatura = 38.40;
+    private int idTipoEntrenamiento = 1;
+    private int idStatusSesion = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +147,12 @@ public class MapsActivity extends FragmentActivity implements
         // Build the Play services client for use by the Fused Location Provider and the Places API.
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+
+
+        chronometer = (Chronometer) findViewById(R.id.chronometer_id);
+        chronometer.setVisibility(View.GONE);
+        startButton = (Button) findViewById(R.id.start_button_id);
+        startButton.setOnClickListener(this);
     }
 
     /**
@@ -179,8 +229,6 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-
-
         if (isInSession) {
             if (count <= 0) {
                 count = CAPTURE_INTERVAL;
@@ -441,7 +489,7 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     // Inicia y detiene la sesion de entrenamiento
-    public void toggleSession(View view) {
+/*    public void toggleSession(View view) {
         if (isInSession) {
             isInSession = false;
             count = 0;
@@ -451,7 +499,167 @@ public class MapsActivity extends FragmentActivity implements
         } else {
             isInSession = true;
         }
+    }*/
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.start_button_id:
+                if (isInSession) {
+                    endSession();
+                } else {
+                    startSession();
+                }
+                break;
+        }
     }
+
+    private void startSession() {
+        startButton.setEnabled(false);
+        idSesion = UUID.randomUUID().toString();
+        isInSession = true;
+
+        momentoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        Log.d("time capture", "Start Time: " + momentoInicio);
+
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+        chronometer.setVisibility(View.VISIBLE);
+        startButton.setText("Stop");
+        startButton.setEnabled(true);
+    }
+
+    private void endSession() {
+        startButton.setEnabled(false);
+        isInSession = false;
+        idRuta = UUID.randomUUID().toString();
+
+        momentoTermino = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        //Log.d("time capture", "Finish Time: " + momentoTermino);
+
+        chronometer.stop();
+        chronometer.setVisibility(View.GONE);
+
+        sessionJSON = getSessionJSON();
+
+        //Toast.makeText(this, idSesion, Toast.LENGTH_LONG).show();
+        //Log.d("UUID capture", "UUID: " + idSesion);
+        Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
+
+        count = 0;
+        route.clear();
+        mMap.clear();
+        updateMarkers();
+        startButton.setText("Start");
+        startButton.setEnabled(true);
+    }
+
+    private JSONObject getSessionJSON() {
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("ID_Sesion", idSesion);
+            jsonObj.put("ID_Atleta", idAtleta);
+            jsonObj.put("ID_Condicion", idCondicion);
+            jsonObj.put("RitmoCardiacoMedio", ritmoCardiacoMedio);
+            jsonObj.put("ID_Ruta", idRuta);
+            jsonObj.put("Coordenadas", getJsonCoordinates());
+            jsonObj.put("Ciudad", ciudad);
+            jsonObj.put("Pais", pais);
+            jsonObj.put("MomentoInicio", momentoInicio);
+            jsonObj.put("MomentoTermino", momentoTermino);
+            jsonObj.put("DistanciaRecorrida", distanciaRecorrida);
+            jsonObj.put("CaloriasQuemadas", caloriasQuemadas);
+            jsonObj.put("HumedadRelativa", humedadRelativa);
+            jsonObj.put("Temperatura", temperatura);
+            jsonObj.put("ID_TipoEntrenamiento", idTipoEntrenamiento);
+            jsonObj.put("ID_StatusSesion", idStatusSesion);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObj;
+    }
+
+    private JSONArray getJsonCoordinates()  {
+        JSONArray jsonLocationArray = new JSONArray();
+        for ( Location location : route) {
+            JSONObject jsonLocation = new JSONObject();
+            try {
+                jsonLocation.put("lat", location.getLatitude());
+                jsonLocation.put("lng", location.getLongitude());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            jsonLocationArray.put(jsonLocation);
+        }
+        return jsonLocationArray;
+    }
+
+    class RetrieveWeather extends AsyncTask<Void, Void, String> {
+
+        private Exception exception;
+
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+            responseView.setText("");
+        }
+
+        protected String doInBackground(Void... urls) {
+            //String email = emailText.getText().toString();
+            // Do some validation here
+
+            try {
+                //URL url = new URL(API_URL + "email=" + email + "&apiKey=" + API_KEY);
+                URL url = new URL(API_URL);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
+            }
+            catch(Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            if(response == null) {
+                response = "THERE WAS AN ERROR";
+            }
+            progressBar.setVisibility(View.GONE);
+            Log.i("INFO", response);
+
+            try {
+                String moviesString = "";
+                JSONArray movies = new JSONArray(response);
+                for (int i = 0; i < movies.length(); i++) {
+                    JSONObject movie = movies.getJSONObject(i);
+
+                    moviesString += Integer.toString(i+1) + ".\n";
+                    moviesString += "NAME: " + movie.getString("name") + "\n";
+                    moviesString += "IMAGE: " + movie.getString("image") + "\n\n";
+                }
+                responseView.setText(moviesString);
+                //JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+                //String requestID = object.getString("requestId");
+                //int likelihood = object.getInt("likelihood");
+                //JSONArray photos = object.getJSONArray("photos");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 }
 
 

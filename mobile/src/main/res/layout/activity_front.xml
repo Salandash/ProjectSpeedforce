@@ -7,12 +7,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.georgewilliam.speedforce.projectspeedforce.SessionsActivity">
+    tools:context="com.georgewilliam.speedforce.projectspeedforce.FrontActivity">
 
-    <fragment android:name="com.georgewilliam.speedforce.projectspeedforce.SessionsFragment"
-        android:id="@+id/sessions_fragment_id"
+    <fragment android:name="com.georgewilliam.speedforce.projectspeedforce.FrontFragment"
+        android:id="@+id/front_fragment_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/fragment_sessions" />
+        tools:layout="@layout/fragment_front" />
 
 </LinearLayout>
