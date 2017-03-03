@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.georgewilliam.speedforce.projectspeedforce.RegisterActivity">
+
+    <ScrollView
+        android:id="@+id/register_scrollview_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/register_textview_email_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="15dp"
+                android:paddingTop="15dp"
+                android:labelFor="@+id/register_edittext_email_id"
+                android:text="@string/register_textview_email_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_email_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_email_id"
+                android:layout_alignBottom="@+id/register_textview_email_id"
+                android:layout_marginStart="30dp"
+                android:layout_toEndOf="@+id/register_textview_email_id"
+                android:ems="15"
+                android:inputType="textEmailAddress">
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/register_textview_username_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_email_id"
+                android:layout_below="@+id/register_edittext_email_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_username_id"
+                android:text="@string/login_textview_username_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_username_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_username_id"
+                android:layout_alignBottom="@+id/register_textview_username_id"
+                android:layout_alignStart="@+id/register_edittext_email_id"
+                android:ems="15"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/register_textview_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_username_id"
+                android:layout_below="@+id/register_edittext_username_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_password_id"
+                android:text="@string/login_textview_password_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_password_id"
+                android:layout_alignBottom="@+id/register_textview_password_id"
+                android:layout_alignStart="@+id/register_edittext_username_id"
+                android:ems="15"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/register_textview_confirm_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_password_id"
+                android:layout_below="@+id/register_edittext_password_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_confirm_password_id"
+                android:text="@string/register_textview_confirm_password_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_confirm_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_confirm_password_id"
+                android:layout_alignBottom="@+id/register_textview_confirm_password_id"
+                android:layout_alignStart="@+id/register_edittext_password_id"
+                android:ems="15"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/register_textview_name_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_confirm_password_id"
+                android:layout_below="@+id/register_edittext_confirm_password_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_name_id"
+                android:text="@string/register_textview_name_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_name_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_name_id"
+                android:layout_alignBottom="@+id/register_textview_name_id"
+                android:layout_alignStart="@+id/register_edittext_confirm_password_id"
+                android:ems="15"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/register_textview_lastname_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_name_id"
+                android:layout_below="@+id/register_edittext_name_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_lastname_id"
+                android:text="@string/register_textview_lastname_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_lastname_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_lastname_id"
+                android:layout_alignBottom="@+id/register_textview_lastname_id"
+                android:layout_alignStart="@+id/register_edittext_name_id"
+                android:ems="15"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/register_textview_birthdate_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_lastname_id"
+                android:layout_below="@+id/register_edittext_lastname_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_birthdate_id"
+                android:text="@string/register_textview_birthdate_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_birthdate_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_birthdate_id"
+                android:layout_alignBottom="@+id/register_textview_birthdate_id"
+                android:layout_alignStart="@+id/register_edittext_lastname_id"
+                android:ems="15"
+                android:inputType="date"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/register_textview_weight_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_birthdate_id"
+                android:layout_below="@+id/register_edittext_birthdate_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_weight_id"
+                android:text="@string/register_textview_weight_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_weight_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_weight_id"
+                android:layout_alignBottom="@+id/register_textview_weight_id"
+                android:layout_alignStart="@+id/register_edittext_birthdate_id"
+                android:ems="15"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                android:id="@+id/register_textview_height_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/register_textview_weight_id"
+                android:layout_below="@+id/register_edittext_weight_id"
+                android:layout_marginTop="47dp"
+                android:labelFor="@+id/register_edittext_height_id"
+                android:text="@string/register_textview_height_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_height_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/register_textview_height_id"
+                android:layout_alignBottom="@+id/register_textview_height_id"
+                android:layout_alignStart="@+id/register_edittext_weight_id"
+                android:ems="15"
+                android:inputType="numberDecimal" />
+
+
+            <Button
+                android:id="@+id/register_button_signup_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/register_edittext_height_id"
+                android:layout_below="@+id/register_edittext_height_id"
+                android:layout_marginTop="34dp"
+                android:text="@string/register_button_signup_string" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

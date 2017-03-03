@@ -19,6 +19,19 @@
         completions."
     </string>
 
+    <!-- Login/Register Strings -->
+    <string name="login_textview_username_string">Username</string>
+    <string name="login_textview_password_string">Password</string>
+    <string name="login_button_signin_string">Sign In</string>
+    <string name="register_textview_email_string">Email</string>
+    <string name="register_textview_confirm_password_string">Confirm \nPassword</string>
+    <string name="register_button_signup_string">Sign Up</string>
+    <string name="register_textview_name_string">Name</string>
+    <string name="register_textview_lastname_string">Last Name</string>
+    <string name="register_textview_birthdate_string">Birthdate</string>
+    <string name="register_textview_weight_string">Weight (kg)</string>
+    <string name="register_textview_height_string">Height (m)</string>
+
     <!-- Strings related to navigation drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -26,4 +39,9 @@
     <!-- Strings related to Google Maps Activity -->
     <string name="default_info_title">Maps: Default Info Title</string>
     <string name="default_info_snippet">Maps: Default Information Snippet</string>
+
+    <!-- API Strings -->
+    <string name="ngrok_url">http://bdbd5649.ngrok.io</string>
+
+
 </resources>

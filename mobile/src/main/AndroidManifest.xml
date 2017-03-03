@@ -55,7 +55,9 @@
             android:name=".MainActivity"
             android:label="Speedforce" />
         <activity android:name=".FrontActivity" />
-        <activity android:name=".ApiActivity"></activity>
+        <activity android:name=".ApiActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RegisterActivity" />
     </application>
 
 </manifest>
