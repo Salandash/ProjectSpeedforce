@@ -6,7 +6,10 @@ package com.georgewilliam.speedforce.projectspeedforce;
 
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -16,6 +19,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ProgressBar;
@@ -44,15 +48,20 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -111,23 +120,22 @@ public class MapsActivity extends FragmentActivity implements
     // for API calls
     private TextView responseView;
     private ProgressBar progressBar;
-    static final String API_URL = "http://45.55.77.201:8085/movies/json";
 
     // to convert to session json
     private String idSesion; //uuid
-    private String idAtleta = "WheelKing";
-    private int idCondicion = 1;
-    private double ritmoCardiacoMedio = 85.33;
+    private String idAtleta = "WheelKing"; //TODO
+    private String condicion = "Desconocido";
+    private double ritmoCardiacoMedio = 85.33; //TODO
     private String idRuta; //uuid
-    private String ciudad = "Santo Domingo";
-    private String pais = "Dominican Republic";
+    private String ciudad = "SD";
+    private String pais = "DO";
     //coordenadas
     private String momentoInicio;
     private String momentoTermino;
-    private double distanciaRecorrida = 4.71;
-    private double caloriasQuemadas = 830.65;
-    private double humedadRelativa = 5.12;
-    private double temperatura = 38.40;
+    private float distanciaRecorrida;
+    private double caloriasQuemadas = 830.65; //TODO
+    private double humedadRelativa;
+    private double temperatura;
     private int idTipoEntrenamiento = 1;
     private int idStatusSesion = 1;
 
@@ -148,6 +156,8 @@ public class MapsActivity extends FragmentActivity implements
         buildGoogleApiClient();
         mGoogleApiClient.connect();
 
+        Bundle extras = getIntent().getExtras();
+        idAtleta = extras.getString("username");
 
         chronometer = (Chronometer) findViewById(R.id.chronometer_id);
         chronometer.setVisibility(View.GONE);
@@ -228,7 +238,6 @@ public class MapsActivity extends FragmentActivity implements
      */
     @Override
     public void onLocationChanged(Location location) {
-        mCurrentLocation = location;
         if (isInSession) {
             if (count <= 0) {
                 count = CAPTURE_INTERVAL;
@@ -238,8 +247,9 @@ public class MapsActivity extends FragmentActivity implements
             }
             count--;
             Log.d("location capture", "COUNT: " + Integer.toString(count));
+            distanciaRecorrida += mCurrentLocation.distanceTo(location);
         }
-
+        mCurrentLocation = location;
         updateMarkers();
     }
 
@@ -515,12 +525,18 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     private void startSession() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         startButton.setEnabled(false);
         idSesion = UUID.randomUUID().toString();
+        distanciaRecorrida = 0;
+        fetchCityAndCountry();
         isInSession = true;
 
         momentoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         Log.d("time capture", "Start Time: " + momentoInicio);
+
+        // Calling Weather API
+        new FetchWeatherTask().execute();
 
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
@@ -542,9 +558,8 @@ public class MapsActivity extends FragmentActivity implements
 
         sessionJSON = getSessionJSON();
 
-        //Toast.makeText(this, idSesion, Toast.LENGTH_LONG).show();
-        //Log.d("UUID capture", "UUID: " + idSesion);
         Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
+        new PostResultsTask().execute();
 
         count = 0;
         route.clear();
@@ -552,6 +567,24 @@ public class MapsActivity extends FragmentActivity implements
         updateMarkers();
         startButton.setText("Start");
         startButton.setEnabled(true);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    private void fetchCityAndCountry() {
+        Geocoder geoCoder = new Geocoder(getBaseContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geoCoder.getFromLocation(
+                    mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+            if (addresses.size() > 0) {
+                ciudad = addresses.get(0).getLocality();
+                pais = addresses.get(0).getCountryName();
+                Log.d("address capture", "City: " + ciudad + ", Country: " + pais);
+            }
+        }
+        catch (IOException e) {
+            Log.e("Address ERROR", "Address retrieve failed");
+            e.printStackTrace();
+        }
     }
 
     private JSONObject getSessionJSON() {
@@ -559,7 +592,7 @@ public class MapsActivity extends FragmentActivity implements
         try {
             jsonObj.put("ID_Sesion", idSesion);
             jsonObj.put("ID_Atleta", idAtleta);
-            jsonObj.put("ID_Condicion", idCondicion);
+            jsonObj.put("ID_Condicion", condicion);
             jsonObj.put("RitmoCardiacoMedio", ritmoCardiacoMedio);
             jsonObj.put("ID_Ruta", idRuta);
             jsonObj.put("Coordenadas", getJsonCoordinates());
@@ -594,23 +627,41 @@ public class MapsActivity extends FragmentActivity implements
         return jsonLocationArray;
     }
 
-    class RetrieveWeather extends AsyncTask<Void, Void, String> {
+    class FetchWeatherTask extends AsyncTask<Void, Void, String> {
 
         private Exception exception;
 
         protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-            responseView.setText("");
+            // progressBar.setVisibility(View.VISIBLE);
+            // responseView.setText("");
         }
 
         protected String doInBackground(Void... urls) {
-            //String email = emailText.getText().toString();
-            // Do some validation here
+
+            final String OWM_API_KEY = "1eda29af092a8d886c1aef0409cd566c";
+            final String BASE_API_URL = "http://api.openweathermap.org/data/2.5/weather?";
+
+            final String LATITUDE_PARAM_NAME = "lat";
+            final String LONGITUDE_PARAM_NAME = "lon";
+            final String API_KEY_PARAM_NAME = "APPID";
+            final String UNIT_PARAM_NAME = "units";
+
+            final String units = "metric";
+            String lat = Double.toString(mCurrentLocation.getLatitude());
+            String lng = Double.toString(mCurrentLocation.getLongitude());
+
+            Uri builtUri = Uri.parse(BASE_API_URL).buildUpon()
+                    .appendQueryParameter(LATITUDE_PARAM_NAME, lat)
+                    .appendQueryParameter(LONGITUDE_PARAM_NAME, lng)
+                    .appendQueryParameter(UNIT_PARAM_NAME, units)
+                    .appendQueryParameter(API_KEY_PARAM_NAME, OWM_API_KEY)
+                    .build();
 
             try {
-                //URL url = new URL(API_URL + "email=" + email + "&apiKey=" + API_KEY);
-                URL url = new URL(API_URL);
+                URL url = new URL(builtUri.toString());
+                Log.d("URL", "Fetch Weather URL: " + url.toString()); //Check built URL
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
                 try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     StringBuilder stringBuilder = new StringBuilder();
@@ -635,28 +686,133 @@ public class MapsActivity extends FragmentActivity implements
             if(response == null) {
                 response = "THERE WAS AN ERROR";
             }
-            progressBar.setVisibility(View.GONE);
-            Log.i("INFO", response);
+            //progressBar.setVisibility(View.GONE);
+            //Log.i("INFO", response);
+            Log.d("JSON", "WEATHER RESPONSE: " + response);
 
             try {
-                String moviesString = "";
-                JSONArray movies = new JSONArray(response);
-                for (int i = 0; i < movies.length(); i++) {
-                    JSONObject movie = movies.getJSONObject(i);
+                JSONObject currentWeather = new JSONObject(response);
+                JSONObject weather = currentWeather.getJSONArray("weather").getJSONObject(0);
+                String description = weather.getString("description");
+                condicion = new WeatherConditionMap().getCondition(weather.getString("icon"));
+                temperatura = currentWeather.getJSONObject("main").getDouble("temp");
+                humedadRelativa = currentWeather.getJSONObject("main").getDouble("humidity");
 
-                    moviesString += Integer.toString(i+1) + ".\n";
-                    moviesString += "NAME: " + movie.getString("name") + "\n";
-                    moviesString += "IMAGE: " + movie.getString("image") + "\n\n";
-                }
-                responseView.setText(moviesString);
-                //JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
-                //String requestID = object.getString("requestId");
-                //int likelihood = object.getInt("likelihood");
-                //JSONArray photos = object.getJSONArray("photos");
+                Log.d("FILTERED RESPONSE 2", "description: " + description
+                        + ", icon: " + condicion
+                        + ", temp: " + Double.toString(temperatura)
+                        + ", humidity: " + Double.toString(humedadRelativa));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
+        }
+    }
+
+    private void goToResults(boolean success, String msg) {
+        if (success) {
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Results Post FAILED", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+
+    class PostResultsTask extends AsyncTask<Void, Void, String> {
+
+        private Exception exception;
+
+        protected void onPreExecute() {
+
+        }
+
+        protected String doInBackground(Void... urls) {
+
+            try {
+                final String API_URL = "http://26e76265.ngrok.io/session";
+                URL url = new URL(API_URL);
+
+                String requestBody = sessionJSON.toString();
+
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    //for output
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "utf-8"));
+                    bufferedWriter.write(requestBody);
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+
+                    //for input
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
+            }
+            catch(Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            if(response == null) {
+                response = "THERE WAS AN ERROR";
+            }
+            Log.i("INFO", response);
+
+            boolean posted = false;
+            String msg = "NO MESSAGE...";
+
+            try {
+                JSONObject responseJSON = new JSONObject(response);
+                posted = responseJSON.getBoolean("success");
+                msg = responseJSON.getString("message");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            goToResults(posted, msg);
+        }
+    }
+
+    class WeatherConditionMap {
+
+        private final Hashtable<String, String> conditions;
+
+        public WeatherConditionMap() {
+            conditions = new Hashtable<>();
+            conditions.put("01", "Despejado");
+            conditions.put("02", "Nublado");
+            conditions.put("03", "Nublado");
+            conditions.put("04", "Nublado");
+            conditions.put("09", "Llovizna");
+            conditions.put("10", "Lluvioso");
+            conditions.put("11", "Tormenta Electrica");
+            conditions.put("13", "Nevando");
+            conditions.put("50", "Neblina");
+        }
+
+        public String getCondition(String code) {
+            String value;
+            String key = code.substring(0, code.length() - 1);
+            if (conditions.containsKey(key)) {
+                value = conditions.get(key);
+            } else {
+                value = "Desconocido";
+            }
+            return value;
         }
     }
 

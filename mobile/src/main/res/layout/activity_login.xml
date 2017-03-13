@@ -9,7 +9,69 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.LoginActivity">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="top|center"
+            android:textSize="@dimen/cast_intro_overlay_focus_radius"
+            android:text="@string/login_textview_title_string" />
+
+
+        <TextView
+            android:id="@+id/login_textview_username_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="47dp"
+            android:layout_marginStart="20dp"
+            android:labelFor="@+id/login_edittext_username_id"
+            android:text="@string/login_textview_username_string" />
+
+        <EditText
+            android:id="@+id/login_edittext_username_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:ems="15"
+            android:inputType="textPersonName">
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/login_textview_password_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="47dp"
+            android:layout_marginStart="20dp"
+            android:labelFor="@+id/login_edittext_password_id"
+            android:text="@string/login_textview_password_string" />
+
+        <EditText
+            android:id="@+id/login_edittext_password_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:ems="15"
+            android:inputType="textPassword" />
+
+
+        <Button
+            android:id="@+id/login_button_signin_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:layout_marginTop="34dp"
+            android:text="@string/login_button_signin_string" />
+
+    </LinearLayout>
+
+    <!--<TextView
         android:id="@+id/login_textview_username_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,6 +124,6 @@
         android:layout_alignEnd="@+id/login_edittext_password_id"
         android:layout_below="@+id/login_edittext_password_id"
         android:layout_marginTop="34dp"
-        android:text="@string/login_button_signin_string" />
+        android:text="@string/login_button_signin_string" />-->
 
 </RelativeLayout>

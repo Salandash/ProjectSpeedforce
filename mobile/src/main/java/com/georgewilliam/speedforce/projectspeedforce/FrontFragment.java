@@ -15,6 +15,8 @@ public class FrontFragment extends Fragment implements OnClickListener {
     Button btnLogin;
     Button btnRegister;
 
+    Button btnDebugMaps;
+
     //for testing purposes
     public final int p1 = 53;
     public final int p2 = 57;
@@ -34,10 +36,13 @@ public class FrontFragment extends Fragment implements OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_front, container, false);
 
-        btnLogin = (Button) view.findViewById(R.id.btn_Login_id);
+        btnLogin = (Button) view.findViewById(R.id.front_button_login_id);
         btnLogin.setOnClickListener(this);
-        btnRegister = (Button) view.findViewById(R.id.btn_Register_id);
+        btnRegister = (Button) view.findViewById(R.id.front_button_register_id);
         btnRegister.setOnClickListener(this);
+
+        btnDebugMaps = (Button) view.findViewById(R.id.front_debug_button_maps_id);
+        btnDebugMaps.setOnClickListener(this);
 
         // Inflate the layout for this fragment
         return view;
@@ -48,15 +53,23 @@ public class FrontFragment extends Fragment implements OnClickListener {
         Intent intent;
         switch (view.getId()) {
 
-            case R.id.btn_Login_id:
+            case R.id.front_button_login_id:
                 intent = new Intent(getActivity(), LoginActivity.class);
                 //intent.putExtra("param1", p1);
                 //intent.putExtra("param2", p2);
                 startActivity(intent);
                 break;
 
-            case R.id.btn_Register_id:
+            case R.id.front_button_register_id:
                 intent = new Intent(getActivity(), RegisterActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.front_debug_button_maps_id:
+                intent = new Intent(getActivity(), MapsActivity.class);
+                //intent.putExtra("param1", p1);
+                //intent.putExtra("param2", p2);
+                intent.putExtra("username", "WheelKing");
                 startActivity(intent);
                 break;
         }

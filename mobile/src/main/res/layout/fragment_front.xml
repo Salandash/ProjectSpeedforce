@@ -15,12 +15,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="LOGIN"
-        android:id="@+id/btn_Login_id" />
+        android:id="@+id/front_button_login_id" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="REGISTER"
-        android:id="@+id/btn_Register_id" />
+        android:id="@+id/front_button_register_id" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DEBUG: Maps Activity"
+        android:id="@+id/front_debug_button_maps_id" />
 
 </LinearLayout>

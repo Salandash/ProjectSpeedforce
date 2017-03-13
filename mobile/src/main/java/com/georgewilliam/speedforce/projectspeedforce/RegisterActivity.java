@@ -1,12 +1,14 @@
 package com.georgewilliam.speedforce.projectspeedforce;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -38,6 +40,12 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextBirthDate;
     private EditText editTextWeight;
     private EditText editTextHeight;
+    ////
+    private EditText editTextGender;
+    private EditText editTextTelephone;
+    private EditText editTextCountry;
+    private EditText editTextCity;
+    private EditText editTextCyclistType;
 
     // Sign In
     private Button buttonSignUp;
@@ -53,6 +61,12 @@ public class RegisterActivity extends AppCompatActivity {
     private String height;
     private double weightDouble;
     private double heightDouble;
+    ////
+    private String gender;
+    private String telephone;
+    private String country;
+    private String city;
+    private String cyclistType;
 
 
     private Calendar myCalendar;
@@ -75,6 +89,12 @@ public class RegisterActivity extends AppCompatActivity {
         editTextWeight = (EditText) findViewById(R.id.register_edittext_weight_id);
         editTextHeight = (EditText) findViewById(R.id.register_edittext_height_id);
 
+        editTextGender = (EditText) findViewById(R.id.register_edittext_gender_id);
+        editTextTelephone = (EditText) findViewById(R.id.register_edittext_telephone_id);
+        editTextCountry = (EditText) findViewById(R.id.register_edittext_country_id);
+        editTextCity = (EditText) findViewById(R.id.register_edittext_city_id);
+        editTextCyclistType = (EditText) findViewById(R.id.register_edittext_cyclist_id);
+
         buttonSignUp = (Button) findViewById(R.id.register_button_signup_id);
 
         // DatePicker Init
@@ -95,6 +115,10 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                // Hides soft keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(editTextBirthDate.getWindowToken(), 0);
+
                 // TODO Auto-generated method stub
                 new DatePickerDialog(RegisterActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
@@ -120,6 +144,12 @@ public class RegisterActivity extends AppCompatActivity {
                 birthDate = String.valueOf(editTextBirthDate.getText());
                 weight = String.valueOf(editTextWeight.getText());
                 height = String.valueOf(editTextHeight.getText());
+
+                gender = String.valueOf(editTextGender.getText());
+                telephone = String.valueOf(editTextTelephone.getText());
+                country = String.valueOf(editTextCountry.getText());
+                city = String.valueOf(editTextCity.getText());
+                cyclistType = String.valueOf(editTextCyclistType.getText());
 
 
                 // Validating Email
@@ -196,7 +226,7 @@ public class RegisterActivity extends AppCompatActivity {
         protected String doInBackground(Void... urls) {
 
             try {
-                final String API_URL = "http://f881be2d.ngrok.io/register";
+                final String API_URL = "http://26e76265.ngrok.io/register";
                 URL url = new URL(API_URL);
 
                 JSONObject json = new JSONObject();
@@ -208,6 +238,11 @@ public class RegisterActivity extends AppCompatActivity {
                 json.put("birthDate", birthDate);
                 json.put("weight", weightDouble);
                 json.put("height", heightDouble);
+                json.put("gender", gender);
+                json.put("telephone", telephone);
+                json.put("country", country);
+                json.put("city", city);
+                json.put("cyclistType", cyclistType);
                 String requestBody = json.toString();
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -252,7 +287,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             try {
                 JSONObject responseJSON = new JSONObject(response);
-                created = responseJSON.getBoolean("created");
+                created = responseJSON.getBoolean("success");
                 msg = responseJSON.getString("message");
             } catch (JSONException e) {
                 e.printStackTrace();

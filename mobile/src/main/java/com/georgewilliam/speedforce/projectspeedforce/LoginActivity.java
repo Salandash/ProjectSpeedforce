@@ -100,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
 
             try {
                 //final String API_URL = String.valueOf(R.string.ngrok_url);
-                //final String API_URL = "http://f881be2d.ngrok.io/login";
-                final String API_URL = "http://b24f4275.ngrok.io/api/users";
+                final String API_URL = "http://26e76265.ngrok.io/login";
+                //final String API_URL = "http://9805f273.ngrok.io/api/users";
                 URL url = new URL(API_URL);
 
                 JSONObject json = new JSONObject();
@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
 
             try {
                 JSONObject responseJSON = new JSONObject(response);
-                authenticated = responseJSON.getBoolean("authenticated");
+                authenticated = responseJSON.getBoolean("success");
                 //msg = responseJSON.getString("message");
             } catch (JSONException e) {
                 e.printStackTrace();
