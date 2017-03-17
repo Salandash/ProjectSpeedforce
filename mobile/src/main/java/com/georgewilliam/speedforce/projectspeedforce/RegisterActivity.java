@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,41 +34,44 @@ import java.util.Locale;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText editTextEmail;
-    private EditText editTextUsername;
-    private EditText editTextPassword;
-    private EditText editTextConfirmPassword;
+//    private EditText editTextUsername;
+//    private EditText editTextPassword;
+//    private EditText editTextConfirmPassword;
     private EditText editTextName;
     private EditText editTextLastName;
     private EditText editTextBirthDate;
-    private EditText editTextWeight;
-    private EditText editTextHeight;
+//    private EditText editTextWeight;
+//    private EditText editTextHeight;
     ////
-    private EditText editTextGender;
+//    private EditText editTextGender;
     private EditText editTextTelephone;
-    private EditText editTextCountry;
+//    private EditText editTextCountry;
     private EditText editTextCity;
-    private EditText editTextCyclistType;
+//    private EditText editTextCyclistType;
 
     // Sign In
-    private Button buttonSignUp;
+    private Button buttonNext;
+    private RadioButton radioButtonM;
+    private RadioButton radioButtonF;
+    private Spinner spinnerCountry;
 
     private String email;
-    private String username;
-    private String password;
-    private String confirmPassword;
+//    private String username;
+//    private String password;
+//    private String confirmPassword;
     private String name;
     private String lastName;
     private String birthDate;
-    private String weight;
-    private String height;
-    private double weightDouble;
-    private double heightDouble;
+//    private String weight;
+//    private String height;
+//    private double weightDouble;
+//    private double heightDouble;
     ////
     private String gender;
     private String telephone;
     private String country;
     private String city;
-    private String cyclistType;
+//    private String cyclistType;
 
 
     private Calendar myCalendar;
@@ -79,23 +84,26 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         editTextEmail = (EditText) findViewById(R.id.register_edittext_email_id);
-        editTextUsername = (EditText) findViewById(R.id.register_edittext_username_id);
-        editTextPassword = (EditText) findViewById(R.id.register_edittext_password_id);
-        editTextConfirmPassword = (EditText) findViewById(R.id.register_edittext_confirm_password_id);
+//        editTextUsername = (EditText) findViewById(R.id.register_edittext_username_id);
+//        editTextPassword = (EditText) findViewById(R.id.register_edittext_password_id);
+//        editTextConfirmPassword = (EditText) findViewById(R.id.register_edittext_confirm_password_id);
 
         editTextName = (EditText) findViewById(R.id.register_edittext_name_id);
         editTextLastName = (EditText) findViewById(R.id.register_edittext_lastname_id);
         editTextBirthDate = (EditText) findViewById(R.id.register_edittext_birthdate_id);
-        editTextWeight = (EditText) findViewById(R.id.register_edittext_weight_id);
-        editTextHeight = (EditText) findViewById(R.id.register_edittext_height_id);
+//        editTextWeight = (EditText) findViewById(R.id.register_edittext_weight_id);
+//        editTextHeight = (EditText) findViewById(R.id.register_edittext_height_id);
 
-        editTextGender = (EditText) findViewById(R.id.register_edittext_gender_id);
+//        editTextGender = (EditText) findViewById(R.id.register_edittext_gender_id);
         editTextTelephone = (EditText) findViewById(R.id.register_edittext_telephone_id);
-        editTextCountry = (EditText) findViewById(R.id.register_edittext_country_id);
+//        editTextCountry = (EditText) findViewById(R.id.register_edittext_country_id);
         editTextCity = (EditText) findViewById(R.id.register_edittext_city_id);
-        editTextCyclistType = (EditText) findViewById(R.id.register_edittext_cyclist_id);
+//        editTextCyclistType = (EditText) findViewById(R.id.register_edittext_cyclist_id);
 
-        buttonSignUp = (Button) findViewById(R.id.register_button_signup_id);
+        buttonNext = (Button) findViewById(R.id.register_button_next_id);
+        radioButtonM = (RadioButton) findViewById(R.id.register_radiobutton_masculine_id);
+        radioButtonF = (RadioButton) findViewById(R.id.register_radiobutton_femenine_id);
+        spinnerCountry = (Spinner) findViewById(R.id.register_spinner_country_id);
 
         // DatePicker Init
         myCalendar = Calendar.getInstance();
@@ -126,38 +134,51 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        buttonSignUp.setOnClickListener(new View.OnClickListener() {
+        buttonNext.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                boolean isError = false;
-                String errorMsg;
                 final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+                final String phonePattern = "^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$";
 
                 email = String.valueOf(editTextEmail.getText());
-                username = String.valueOf(editTextUsername.getText());
-                password = String.valueOf(editTextPassword.getText());
-                confirmPassword = String.valueOf(editTextConfirmPassword.getText());
+//                username = String.valueOf(editTextUsername.getText());
+//                password = String.valueOf(editTextPassword.getText());
+//                confirmPassword = String.valueOf(editTextConfirmPassword.getText());
                 name = String.valueOf(editTextName.getText());
                 lastName = String.valueOf(editTextLastName.getText());
                 birthDate = String.valueOf(editTextBirthDate.getText());
-                weight = String.valueOf(editTextWeight.getText());
-                height = String.valueOf(editTextHeight.getText());
+//                weight = String.valueOf(editTextWeight.getText());
+//                height = String.valueOf(editTextHeight.getText());
 
-                gender = String.valueOf(editTextGender.getText());
+//                gender = String.valueOf(editTextGender.getText());
                 telephone = String.valueOf(editTextTelephone.getText());
-                country = String.valueOf(editTextCountry.getText());
+//                country = String.valueOf(editTextCountry.getText());
+                country = spinnerCountry.getSelectedItem().toString();
                 city = String.valueOf(editTextCity.getText());
-                cyclistType = String.valueOf(editTextCyclistType.getText());
+//                cyclistType = String.valueOf(editTextCyclistType.getText());
 
 
                 // Validating Email
                 if (!email.matches(emailPattern)) {
-                    toastResponse("Email does not have a valid pattern.");
+                    toastMessage("Email does not have a valid pattern.");
                     return;
                 }
 
+                // Validating Phone Number
+                if (!telephone.matches(phonePattern)) {
+                    toastMessage("Phone Number does not have a valid pattern.");
+                    return;
+                }
+
+                // Validating Gender Selection
+                if (!radioButtonM.isChecked() && !radioButtonF.isChecked()) {
+                    toastMessage("A Gender was not selected.");
+                    return;
+                }
+
+                /*
                 // Validating passwords
                 if (!password.equals(confirmPassword)) {
                     toastResponse("Passwords are not the same.");
@@ -188,24 +209,64 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                new SingUpTask().execute();
+                new SingUpTask().execute();*/
+
+                nextRegisterPage();
+            }
+        });
+
+        radioButtonM.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (radioButtonM.isChecked()) {
+                    gender = "Masculino";
+                    toastMessage(gender);
+                }
+            }
+        });
+
+        radioButtonF.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (radioButtonF.isChecked()) {
+                    gender = "Femenino";
+                    toastMessage(gender);
+                }
             }
         });
     }
 
     public void updateLabel() {
 
-        String myFormat = "yyyy-MM-dd"; //In which you need put here
+        String myFormat = "MM/dd/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         editTextBirthDate.setText(sdf.format(myCalendar.getTime()));
     }
 
-    public void toastResponse(String msg) {
+    public void toastMessage(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
-    public void login(String msg) {
+    public void nextRegisterPage() {
+        Intent intent;
+        intent = new Intent(this, RegisterUserActivity.class);
+        intent.putExtra("email", email);
+        intent.putExtra("name", name);
+        intent.putExtra("lastName", lastName);
+        intent.putExtra("birthDate", birthDate);
+        intent.putExtra("gender", gender);
+        intent.putExtra("telephone", telephone);
+        intent.putExtra("country", country);
+        intent.putExtra("city", city);
+        startActivity(intent);
+        // when MapsActivity closes
+        finish();
+    }
+
+    /*public void login(String msg) {
         Intent intent;
         intent = new Intent(this, MapsActivity.class);
         intent.putExtra("username", username);
@@ -213,9 +274,9 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
         // when MapsActivity closes
         finish();
-    }
+    }*/
 
-    class SingUpTask extends AsyncTask<Void, Void, String> {
+    /*class SingUpTask extends AsyncTask<Void, Void, String> {
 
         private Exception exception;
 
@@ -293,12 +354,12 @@ public class RegisterActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            toastResponse(msg);
+            toastMessage(msg);
 
             if (created) {
                 login(msg);
             }
         }
-    }
+    }*/
 
 }

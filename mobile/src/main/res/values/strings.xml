@@ -25,6 +25,7 @@
     <string name="login_button_signin_string">Sign In</string>
     <string name="register_textview_email_string">Email</string>
     <string name="register_textview_confirm_password_string">Confirm Password</string>
+    <string name="register_button_next_string">Next</string>
     <string name="register_button_signup_string">Sign Up</string>
     <string name="register_textview_name_string">Name</string>
     <string name="register_textview_lastname_string">Last Name</string>
@@ -35,9 +36,24 @@
     <string name="register_textview_country_string">Country</string>
     <string name="register_textview_city_string">City</string>
     <string name="register_textview_gender_string">Gender</string>
+    <string name="register_radiobutton_masculine_string">M</string>
+    <string name="register_radiobutton_femenine_string">F</string>
     <string name="register_textview_cyclist_string">Cyclist Type</string>
     <string name="register_textview_title_string">Create User</string>
     <string name="login_textview_title_string">Login</string>
+    <string-array name="register_spinner_country_stringarray">
+        <item>Dominican Republic</item>
+        <item>Mexico</item>
+        <item>Panama</item>
+    </string-array>
+
+    <!-- Maps Activity Strings -->
+    <string name="maps_dialog_trainingtype_title_string">Select Training Type</string>
+    <string-array name="maps_dialog_trainingtype_items_stringarray">
+        <item>Distancia</item>
+        <item>Resistencia</item>
+        <item>Velocidad</item>
+    </string-array>
 
     <!-- Strings related to navigation drawer -->
     <string name="drawer_open">Open navigation drawer</string>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.georgewilliam.speedforce.projectspeedforce.RegisterUserActivity">
+
+    <ScrollView
+        android:id="@+id/register_user_scrollview_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="top|center"
+                android:textSize="@dimen/cast_intro_overlay_focus_radius"
+                android:text="@string/register_textview_title_string" />
+
+            <TextView
+                android:id="@+id/register_textview_username_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginStart="20dp"
+                android:labelFor="@+id/register_edittext_username_id"
+                android:text="@string/login_textview_username_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_username_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:ems="15"
+                android:inputType="textPersonName">
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/register_textview_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginStart="20dp"
+                android:labelFor="@+id/register_edittext_password_id"
+                android:text="@string/login_textview_password_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:ems="15"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/register_textview_confirm_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginStart="20dp"
+                android:labelFor="@+id/register_edittext_confirm_password_id"
+                android:text="@string/register_textview_confirm_password_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_confirm_password_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:ems="15"
+                android:inputType="textPassword" />
+
+
+            <Button
+                android:id="@+id/register_button_signup_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="34dp"
+                android:text="@string/register_button_signup_string" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

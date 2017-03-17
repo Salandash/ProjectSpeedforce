@@ -8,11 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,56 +20,67 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterUserActivity extends AppCompatActivity {
 
-    // User name
     private EditText editTextUsername;
-    // Password
     private EditText editTextPassword;
-    // Sign In
-    private Button buttonSignIn;
-    // Message
-    private TextView textViewMessage;
+    private EditText editTextConfirmPassword;
 
     private String username;
-
     private String password;
+    private String confirmPassword;
 
-    private ProgressBar progressBar;
-
-    private TextView responseView;
+    private String email;
+    private String name;
+    private String lastName;
+    private String birthDate;
+    private String gender;
+    private String telephone;
+    private String country;
+    private String city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register_user);
 
-        editTextUsername = (EditText) findViewById(R.id.login_edittext_username_id);
-        editTextPassword = (EditText) findViewById(R.id.login_edittext_password_id);
-        buttonSignIn = (Button) findViewById(R.id.login_button_signin_id);
+        Bundle extras = getIntent().getExtras();
+        email = extras.getString("email");
+        name = extras.getString("name");
+        lastName = extras.getString("lastName");
+        birthDate = extras.getString("birthDate");
+        gender = extras.getString("gender");
+        telephone = extras.getString("telephone");
+        country = extras.getString("country");
+        city = extras.getString("city");
 
-        buttonSignIn.setOnClickListener(new View.OnClickListener() {
+        editTextUsername = (EditText) findViewById(R.id.register_edittext_username_id);
+        editTextPassword = (EditText) findViewById(R.id.register_edittext_password_id);
+        editTextConfirmPassword = (EditText) findViewById(R.id.register_edittext_confirm_password_id);
+
+        Button buttonSignUp;
+        buttonSignUp = (Button) findViewById(R.id.register_button_signup_id);
+
+        buttonSignUp.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                // Stores User name
                 username = String.valueOf(editTextUsername.getText());
-                // Stores Password
                 password = String.valueOf(editTextPassword.getText());
+                confirmPassword = String.valueOf(editTextConfirmPassword.getText());
 
-                // Validates the User name and Password for admin, admin
-                /*if (username.equals("admin") && password.equals("admin")) {
+                // Validating passwords
+                if (!password.equals(confirmPassword)) {
+                    toastMessage("Passwords are not the same.");
+                    return;
+                }
 
-                } else {
-
-                }*/
-
-                new SingInTask().execute();
+                new SingUpTask().execute();
             }
         });
     }
 
-    public void toastResponse(String msg) {
+    public void toastMessage(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
@@ -86,28 +94,37 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    class SingInTask extends AsyncTask<Void, Void, String> {
+    class SingUpTask extends AsyncTask<Void, Void, String> {
 
-        private Exception exception;
+//        private Exception exception;
 
         protected void onPreExecute() {
-            //progressBar.setVisibility(View.VISIBLE);
-            //responseView.setText("");
+
         }
 
         protected String doInBackground(Void... urls) {
-            // Do some validation here
 
             try {
-                //final String API_URL = String.valueOf(R.string.ngrok_url);
-                final String API_URL = "http://26e76265.ngrok.io/login";
-                //final String API_URL = "http://9805f273.ngrok.io/api/speedforce/users/loginA";
+                final String API_URL = "http://26e76265.ngrok.io/register";
+                //final String API_URL = "http://26e76265.ngrok.io/api/speedforce/users/registerA";
                 URL url = new URL(API_URL);
 
                 JSONObject json = new JSONObject();
                 json.put("Username", username);
                 json.put("Password", password);
                 json.put("Role", "Athlete");
+                json.put("Email", email);
+                json.put("Name", name);
+                json.put("LastName", lastName);
+                json.put("Sex", gender);
+                json.put("BirthDate", birthDate);
+                json.put("CityName", city);
+                json.put("CountryName", country);
+                json.put("Telephone", telephone);
+                json.put("Height", "");// TODO
+                json.put("Weight", "");// TODO
+                json.put("BikerType", "");// TODO
+                json.put("Bike", "");// TODO
                 String requestBody = json.toString();
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -116,13 +133,10 @@ public class LoginActivity extends AppCompatActivity {
                     urlConnection.setDoOutput(true);
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/json");
-                    ////OutputStream outputStream = new BufferedOutputStream(urlConnection.getOutputStream());
-                    ////BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "utf-8"));
                     BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "utf-8"));
                     bufferedWriter.write(requestBody);
                     bufferedWriter.flush();
                     bufferedWriter.close();
-                    ////outputStream.close();
 
                     //for input
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -148,33 +162,24 @@ public class LoginActivity extends AppCompatActivity {
             if(response == null) {
                 response = "THERE WAS AN ERROR";
             }
-            //progressBar.setVisibility(View.GONE);
             Log.i("INFO", response);
-            //responseView.setText(response);
-            // TODO: check this.exception
-            // TODO: do something with the feed
 
-            boolean authenticated = false;
+            boolean created = false;
             String msg = "NO MESSAGE...";
 
             try {
                 JSONObject responseJSON = new JSONObject(response);
-                authenticated = responseJSON.getBoolean("success");
-                //msg = responseJSON.getString("message");
+                created = responseJSON.getBoolean("success");
+                msg = responseJSON.getString("message");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            //toastResponse(msg);
+            toastMessage(msg);
 
-            if (authenticated) {
-                msg = "Login Successful!!";
-                toastResponse(msg);
+            if (created) {
                 login(msg);
-            } else {
-                toastResponse("Login Failure.");
             }
         }
     }
-
 }

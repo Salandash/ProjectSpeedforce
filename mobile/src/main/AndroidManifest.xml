@@ -58,7 +58,7 @@
         <activity android:name=".ApiActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".RegisterAthleteActivity"></activity>
+        <activity android:name=".RegisterUserActivity"></activity>
     </application>
 
 </manifest>

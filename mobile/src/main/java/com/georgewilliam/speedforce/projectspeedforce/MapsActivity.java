@@ -4,6 +4,7 @@
  */
 package com.georgewilliam.speedforce.projectspeedforce;
 
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -17,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -72,8 +74,7 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener,
-        View.OnClickListener {
+        LocationListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
@@ -122,22 +123,22 @@ public class MapsActivity extends FragmentActivity implements
     private ProgressBar progressBar;
 
     // to convert to session json
-    private String idSesion; //uuid
-    private String idAtleta = "WheelKing"; //TODO
-    private String condicion = "Desconocido";
-    private double ritmoCardiacoMedio = 85.33; //TODO
-    private String idRuta; //uuid
-    private String ciudad = "SD";
-    private String pais = "DO";
+    private String sessionID; //uuid
+    private String userID = "PlaceHolderUser";
+    private String climateCondition = "Desconocido";
+    private double averageBPM = 85.33; //TODO
+    private String routeID; //uuid
+    private String city = "Desconocido";
+    private String country = "Desconocido";
     //coordenadas
-    private String momentoInicio;
-    private String momentoTermino;
-    private float distanciaRecorrida;
-    private double caloriasQuemadas = 830.65; //TODO
-    private double humedadRelativa;
-    private double temperatura;
-    private int idTipoEntrenamiento = 1;
-    private int idStatusSesion = 1;
+    private String startTime;
+    private String endTime;
+    private float distance;
+    private double burntCalories = 830.65; //TODO
+    private double relativeHumidity;
+    private double temperature;
+    private String trainingType;
+    private String sessionStatus = "Local";
 
 
     @Override
@@ -157,12 +158,22 @@ public class MapsActivity extends FragmentActivity implements
         mGoogleApiClient.connect();
 
         Bundle extras = getIntent().getExtras();
-        idAtleta = extras.getString("username");
+        userID = extras.getString("username");
 
         chronometer = (Chronometer) findViewById(R.id.chronometer_id);
         chronometer.setVisibility(View.GONE);
         startButton = (Button) findViewById(R.id.start_button_id);
-        startButton.setOnClickListener(this);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isInSession) {
+                    endSession();
+                } else {
+                    displayTrainingTypeSelectDialog();
+                    //startSession();
+                }
+            }
+        });
     }
 
     /**
@@ -247,7 +258,7 @@ public class MapsActivity extends FragmentActivity implements
             }
             count--;
             Log.d("location capture", "COUNT: " + Integer.toString(count));
-            distanciaRecorrida += mCurrentLocation.distanceTo(location);
+            distance += mCurrentLocation.distanceTo(location);
         }
         mCurrentLocation = location;
         updateMarkers();
@@ -511,29 +522,16 @@ public class MapsActivity extends FragmentActivity implements
         }
     }*/
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.start_button_id:
-                if (isInSession) {
-                    endSession();
-                } else {
-                    startSession();
-                }
-                break;
-        }
-    }
-
     private void startSession() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         startButton.setEnabled(false);
-        idSesion = UUID.randomUUID().toString();
-        distanciaRecorrida = 0;
+        sessionID = UUID.randomUUID().toString();
+        distance = 0;
         fetchCityAndCountry();
         isInSession = true;
 
-        momentoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-        Log.d("time capture", "Start Time: " + momentoInicio);
+        startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        Log.d("time capture", "Start Time: " + startTime);
 
         // Calling Weather API
         new FetchWeatherTask().execute();
@@ -548,10 +546,10 @@ public class MapsActivity extends FragmentActivity implements
     private void endSession() {
         startButton.setEnabled(false);
         isInSession = false;
-        idRuta = UUID.randomUUID().toString();
+        routeID = UUID.randomUUID().toString();
 
-        momentoTermino = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-        //Log.d("time capture", "Finish Time: " + momentoTermino);
+        endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        //Log.d("time capture", "Finish Time: " + endTime);
 
         chronometer.stop();
         chronometer.setVisibility(View.GONE);
@@ -576,9 +574,9 @@ public class MapsActivity extends FragmentActivity implements
             List<Address> addresses = geoCoder.getFromLocation(
                     mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
             if (addresses.size() > 0) {
-                ciudad = addresses.get(0).getLocality();
-                pais = addresses.get(0).getCountryName();
-                Log.d("address capture", "City: " + ciudad + ", Country: " + pais);
+                city = addresses.get(0).getLocality();
+                country = addresses.get(0).getCountryName();
+                Log.d("address capture", "City: " + city + ", Country: " + country);
             }
         }
         catch (IOException e) {
@@ -590,29 +588,29 @@ public class MapsActivity extends FragmentActivity implements
     private JSONObject getSessionJSON() {
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("ID_Sesion", idSesion);
-            jsonObj.put("ID_Atleta", idAtleta);
-            jsonObj.put("ID_Condicion", condicion);
-            jsonObj.put("RitmoCardiacoMedio", ritmoCardiacoMedio);
-            jsonObj.put("ID_Ruta", idRuta);
-            jsonObj.put("Coordenadas", getJsonCoordinates());
-            jsonObj.put("Ciudad", ciudad);
-            jsonObj.put("Pais", pais);
-            jsonObj.put("MomentoInicio", momentoInicio);
-            jsonObj.put("MomentoTermino", momentoTermino);
-            jsonObj.put("DistanciaRecorrida", distanciaRecorrida);
-            jsonObj.put("CaloriasQuemadas", caloriasQuemadas);
-            jsonObj.put("HumedadRelativa", humedadRelativa);
-            jsonObj.put("Temperatura", temperatura);
-            jsonObj.put("ID_TipoEntrenamiento", idTipoEntrenamiento);
-            jsonObj.put("ID_StatusSesion", idStatusSesion);
+            jsonObj.put("SessionID", sessionID);
+            jsonObj.put("UserID", userID);
+            jsonObj.put("ClimateConditionID", climateCondition);
+            jsonObj.put("AverageBPM", averageBPM);
+            jsonObj.put("RouteID", routeID);
+            jsonObj.put("Coordinates", getCoordinatesJSON()); //pin
+            jsonObj.put("CityName", city); //pin
+            jsonObj.put("CountryName", country); //pin
+            jsonObj.put("StartTime", startTime);
+            jsonObj.put("EndTime", endTime);
+            jsonObj.put("Distance", distance);
+            jsonObj.put("BurntCalories", burntCalories);
+            jsonObj.put("RelativeHumidity", relativeHumidity);
+            jsonObj.put("Temperature", temperature);
+            jsonObj.put("TrainingTypeID", trainingType);
+            jsonObj.put("SessionStatusID", sessionStatus);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return jsonObj;
     }
 
-    private JSONArray getJsonCoordinates()  {
+    private JSONArray getCoordinatesJSON()  {
         JSONArray jsonLocationArray = new JSONArray();
         for ( Location location : route) {
             JSONObject jsonLocation = new JSONObject();
@@ -626,6 +624,39 @@ public class MapsActivity extends FragmentActivity implements
         }
         return jsonLocationArray;
     }
+
+    private void displayTrainingTypeSelectDialog() {
+        final String[] items = getResources().getStringArray(R.array.maps_dialog_trainingtype_items_stringarray);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.maps_dialog_trainingtype_title_string)
+                .setItems(R.array.maps_dialog_trainingtype_items_stringarray, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        trainingType = items[i];
+                        dialogInterface.dismiss();
+                        Log.d("Dialog Select", "TRAINING TYPE: " + trainingType);
+                        toastMessage("Selected: " + trainingType);
+
+                        startSession();
+                    }
+                });
+        dialog.show();
+    }
+
+    private void goToResults(boolean success, String msg) {
+        if (success) {
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Results Post FAILED", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void toastMessage(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
 
     class FetchWeatherTask extends AsyncTask<Void, Void, String> {
 
@@ -694,14 +725,14 @@ public class MapsActivity extends FragmentActivity implements
                 JSONObject currentWeather = new JSONObject(response);
                 JSONObject weather = currentWeather.getJSONArray("weather").getJSONObject(0);
                 String description = weather.getString("description");
-                condicion = new WeatherConditionMap().getCondition(weather.getString("icon"));
-                temperatura = currentWeather.getJSONObject("main").getDouble("temp");
-                humedadRelativa = currentWeather.getJSONObject("main").getDouble("humidity");
+                climateCondition = new WeatherConditionMap().getCondition(weather.getString("icon"));
+                temperature = currentWeather.getJSONObject("main").getDouble("temp");
+                relativeHumidity = currentWeather.getJSONObject("main").getDouble("humidity");
 
                 Log.d("FILTERED RESPONSE 2", "description: " + description
-                        + ", icon: " + condicion
-                        + ", temp: " + Double.toString(temperatura)
-                        + ", humidity: " + Double.toString(humedadRelativa));
+                        + ", icon: " + climateCondition
+                        + ", temp: " + Double.toString(temperature)
+                        + ", humidity: " + Double.toString(relativeHumidity));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -709,15 +740,6 @@ public class MapsActivity extends FragmentActivity implements
 
         }
     }
-
-    private void goToResults(boolean success, String msg) {
-        if (success) {
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Results Post FAILED", Toast.LENGTH_LONG).show();
-        }
-    }
-
 
 
     class PostResultsTask extends AsyncTask<Void, Void, String> {
@@ -786,6 +808,7 @@ public class MapsActivity extends FragmentActivity implements
             goToResults(posted, msg);
         }
     }
+
 
     class WeatherConditionMap {
 
