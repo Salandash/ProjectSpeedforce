@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/mobile/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jar="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/wear/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         revision="24.0.1"
-        sha1="18808d5b4ef25a4005d5c51cff6d538703e0d914">
-        <dex dex="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/mobile/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_f03612c9950be08f1fabc40e98ea60be3c2eb6c8/classes.dex" />
+        sha1="343138239d15c300ab3750732e2c11fd0587bfb3">
+        <dex dex="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/wear/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_ecaf12811d8dc84eb6b79640595c9f36f224921f/classes.dex" />
     </item>
 
 </items>

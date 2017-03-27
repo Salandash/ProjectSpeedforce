@@ -195,40 +195,6 @@
 
             </RadioGroup>
 
-            <!--<TextView
-                android:id="@+id/register_textview_weight_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="47dp"
-                android:layout_marginStart="20dp"
-                android:labelFor="@+id/register_edittext_weight_id"
-                android:text="@string/register_textview_weight_string" />
-
-            <EditText
-                android:id="@+id/register_edittext_weight_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:ems="15"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                android:id="@+id/register_textview_height_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="47dp"
-                android:layout_marginStart="20dp"
-                android:labelFor="@+id/register_edittext_height_id"
-                android:text="@string/register_textview_height_string" />
-
-            <EditText
-                android:id="@+id/register_edittext_height_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:ems="10"
-                android:inputType="numberDecimal" />-->
-
             <TextView
                 android:id="@+id/register_textview_country_id"
                 android:layout_width="wrap_content"
@@ -287,22 +253,73 @@
                 android:ems="10"
                 android:inputType="phone" />
 
-            <!--<TextView
-                android:id="@+id/register_textview_cyclist_id"
+            <TextView
+                android:id="@+id/register_textview_weight_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
-                android:labelFor="@+id/register_edittext_cyclist_id"
-                android:text="@string/register_textview_cyclist_string" />
+                android:labelFor="@+id/register_edittext_weight_id"
+                android:text="@string/register_textview_weight_string" />
 
             <EditText
-                android:id="@+id/register_edittext_cyclist_id"
+                android:id="@+id/register_edittext_weight_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:ems="15"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                android:id="@+id/register_textview_height_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginStart="20dp"
+                android:labelFor="@+id/register_edittext_height_id"
+                android:text="@string/register_textview_height_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_height_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
-                android:inputType="text" />-->
+                android:inputType="numberDecimal" />
+
+            <TextView
+                android:id="@+id/register_textview_bikertype_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginStart="20dp"
+                android:labelFor="@+id/register_edittext_bikertype_id"
+                android:text="@string/register_textview_bikertype_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_bikertype_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:ems="10"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/register_textview_bike_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginStart="20dp"
+                android:labelFor="@+id/register_edittext_bike_id"
+                android:text="@string/register_textview_bike_string" />
+
+            <EditText
+                android:id="@+id/register_edittext_bike_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:ems="10"
+                android:inputType="text" />
 
 
             <Button

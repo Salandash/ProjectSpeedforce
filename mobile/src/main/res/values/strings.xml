@@ -38,7 +38,8 @@
     <string name="register_textview_gender_string">Gender</string>
     <string name="register_radiobutton_masculine_string">M</string>
     <string name="register_radiobutton_femenine_string">F</string>
-    <string name="register_textview_cyclist_string">Cyclist Type</string>
+    <string name="register_textview_bikertype_string">Biker Type</string>
+    <string name="register_textview_bike_string">Bike</string>
     <string name="register_textview_title_string">Create User</string>
     <string name="login_textview_title_string">Login</string>
     <string-array name="register_spinner_country_stringarray">

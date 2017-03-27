@@ -40,14 +40,15 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextName;
     private EditText editTextLastName;
     private EditText editTextBirthDate;
-//    private EditText editTextWeight;
-//    private EditText editTextHeight;
+    private EditText editTextWeight;
+    private EditText editTextHeight;
     ////
 //    private EditText editTextGender;
     private EditText editTextTelephone;
 //    private EditText editTextCountry;
     private EditText editTextCity;
-//    private EditText editTextCyclistType;
+    private EditText editTextBikerType;
+    private EditText editTextBike;
 
     // Sign In
     private Button buttonNext;
@@ -62,21 +63,23 @@ public class RegisterActivity extends AppCompatActivity {
     private String name;
     private String lastName;
     private String birthDate;
-//    private String weight;
-//    private String height;
-//    private double weightDouble;
-//    private double heightDouble;
+    private String weight;
+    private String height;
+    private double weightDouble;
+    private double heightDouble;
     ////
     private String gender;
     private String telephone;
     private String country;
     private String city;
-//    private String cyclistType;
+    private String bikerType;
+    private String bike;
 
 
     private Calendar myCalendar;
 
     private DatePickerDialog.OnDateSetListener date;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,14 +94,15 @@ public class RegisterActivity extends AppCompatActivity {
         editTextName = (EditText) findViewById(R.id.register_edittext_name_id);
         editTextLastName = (EditText) findViewById(R.id.register_edittext_lastname_id);
         editTextBirthDate = (EditText) findViewById(R.id.register_edittext_birthdate_id);
-//        editTextWeight = (EditText) findViewById(R.id.register_edittext_weight_id);
-//        editTextHeight = (EditText) findViewById(R.id.register_edittext_height_id);
+        editTextWeight = (EditText) findViewById(R.id.register_edittext_weight_id);
+        editTextHeight = (EditText) findViewById(R.id.register_edittext_height_id);
 
 //        editTextGender = (EditText) findViewById(R.id.register_edittext_gender_id);
         editTextTelephone = (EditText) findViewById(R.id.register_edittext_telephone_id);
 //        editTextCountry = (EditText) findViewById(R.id.register_edittext_country_id);
         editTextCity = (EditText) findViewById(R.id.register_edittext_city_id);
-//        editTextCyclistType = (EditText) findViewById(R.id.register_edittext_cyclist_id);
+        editTextBikerType = (EditText) findViewById(R.id.register_edittext_bikertype_id);
+        editTextBike = (EditText) findViewById(R.id.register_edittext_bike_id);
 
         buttonNext = (Button) findViewById(R.id.register_button_next_id);
         radioButtonM = (RadioButton) findViewById(R.id.register_radiobutton_masculine_id);
@@ -149,15 +153,16 @@ public class RegisterActivity extends AppCompatActivity {
                 name = String.valueOf(editTextName.getText());
                 lastName = String.valueOf(editTextLastName.getText());
                 birthDate = String.valueOf(editTextBirthDate.getText());
-//                weight = String.valueOf(editTextWeight.getText());
-//                height = String.valueOf(editTextHeight.getText());
+                weight = String.valueOf(editTextWeight.getText());
+                height = String.valueOf(editTextHeight.getText());
 
 //                gender = String.valueOf(editTextGender.getText());
                 telephone = String.valueOf(editTextTelephone.getText());
 //                country = String.valueOf(editTextCountry.getText());
                 country = spinnerCountry.getSelectedItem().toString();
                 city = String.valueOf(editTextCity.getText());
-//                cyclistType = String.valueOf(editTextCyclistType.getText());
+                bikerType = String.valueOf(editTextBikerType.getText());
+                bike = String.valueOf(editTextBike.getText());
 
 
                 // Validating Email
@@ -178,22 +183,21 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                /*
                 // Validating passwords
-                if (!password.equals(confirmPassword)) {
+                /*if (!password.equals(confirmPassword)) {
                     toastResponse("Passwords are not the same.");
                     return;
-                }
+                }*/
 
                 // Validating weight
                 try {
                     weightDouble = Double.parseDouble(weight);
                 } catch (NumberFormatException e) {
-                    toastResponse("Weight value is not a number.");
+                    toastMessage("Weight value is not a number.");
                     return;
                 }
                 if (weightDouble < 0) {
-                    toastResponse("Weight is a negative number.");
+                    toastMessage("Weight cannot a negative number.");
                     return;
                 }
 
@@ -201,15 +205,15 @@ public class RegisterActivity extends AppCompatActivity {
                 try {
                     heightDouble = Double.parseDouble(height);
                 } catch (NumberFormatException e) {
-                    toastResponse("Height value is not a number.");
+                    toastMessage("Height value is not a number.");
                     return;
                 }
                 if (heightDouble < 0) {
-                    toastResponse("Height is a negative number.");
+                    toastMessage("Height cannot a negative number.");
                     return;
                 }
 
-                new SingUpTask().execute();*/
+                //new SingUpTask().execute();
 
                 nextRegisterPage();
             }
@@ -236,6 +240,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public void updateLabel() {
@@ -261,6 +266,10 @@ public class RegisterActivity extends AppCompatActivity {
         intent.putExtra("telephone", telephone);
         intent.putExtra("country", country);
         intent.putExtra("city", city);
+        intent.putExtra("height", height);
+        intent.putExtra("weight", weight);
+        intent.putExtra("bikerType", bikerType);
+        intent.putExtra("bike", bike);
         startActivity(intent);
         // when MapsActivity closes
         finish();

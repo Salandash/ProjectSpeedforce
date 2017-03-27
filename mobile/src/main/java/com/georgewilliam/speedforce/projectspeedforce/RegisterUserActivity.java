@@ -38,6 +38,10 @@ public class RegisterUserActivity extends AppCompatActivity {
     private String telephone;
     private String country;
     private String city;
+    private double height;
+    private double weight;
+    private String bikerType;
+    private String bike;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,10 @@ public class RegisterUserActivity extends AppCompatActivity {
         telephone = extras.getString("telephone");
         country = extras.getString("country");
         city = extras.getString("city");
+        height = extras.getDouble("height");
+        weight = extras.getDouble("weight");
+        bikerType = extras.getString("bikerType");
+        bike = extras.getString("bike");
 
         editTextUsername = (EditText) findViewById(R.id.register_edittext_username_id);
         editTextPassword = (EditText) findViewById(R.id.register_edittext_password_id);
@@ -121,10 +129,10 @@ public class RegisterUserActivity extends AppCompatActivity {
                 json.put("CityName", city);
                 json.put("CountryName", country);
                 json.put("Telephone", telephone);
-                json.put("Height", "");// TODO
-                json.put("Weight", "");// TODO
-                json.put("BikerType", "");// TODO
-                json.put("Bike", "");// TODO
+                json.put("Height", height);
+                json.put("Weight", weight);
+                json.put("BikerType", bikerType);
+                json.put("Bike", bike);
                 String requestBody = json.toString();
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

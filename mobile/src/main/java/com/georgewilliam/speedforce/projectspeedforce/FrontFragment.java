@@ -66,10 +66,10 @@ public class FrontFragment extends Fragment implements OnClickListener {
                 break;
 
             case R.id.front_debug_button_maps_id:
-                intent = new Intent(getActivity(), MapsActivity.class);
+                intent = new Intent(getActivity(), ApiActivity.class);
                 //intent.putExtra("param1", p1);
                 //intent.putExtra("param2", p2);
-                intent.putExtra("username", "WheelKing");
+                //intent.putExtra("username", "WheelKing");
                 startActivity(intent);
                 break;
         }
