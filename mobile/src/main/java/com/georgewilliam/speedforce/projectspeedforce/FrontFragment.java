@@ -55,8 +55,6 @@ public class FrontFragment extends Fragment implements OnClickListener {
 
             case R.id.front_button_login_id:
                 intent = new Intent(getActivity(), LoginActivity.class);
-                //intent.putExtra("param1", p1);
-                //intent.putExtra("param2", p2);
                 startActivity(intent);
                 break;
 
@@ -69,7 +67,7 @@ public class FrontFragment extends Fragment implements OnClickListener {
                 intent = new Intent(getActivity(), ApiActivity.class);
                 //intent.putExtra("param1", p1);
                 //intent.putExtra("param2", p2);
-                //intent.putExtra("username", "WheelKing");
+                intent.putExtra("username", "WheelKing");
                 startActivity(intent);
                 break;
         }

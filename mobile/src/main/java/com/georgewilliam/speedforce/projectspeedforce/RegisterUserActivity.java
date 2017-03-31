@@ -120,7 +120,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject();
                 json.put("Username", username);
                 json.put("Password", password);
-                json.put("Role", "Athlete");
+                json.put("Role", "Atleta");
                 json.put("Email", email);
                 json.put("Name", name);
                 json.put("LastName", lastName);
@@ -128,11 +128,11 @@ public class RegisterUserActivity extends AppCompatActivity {
                 json.put("BirthDate", birthDate);
                 json.put("CityName", city);
                 json.put("CountryName", country);
-                json.put("Telephone", telephone);
+                json.put("TelephoneNumber", telephone);
                 json.put("Height", height);
                 json.put("Weight", weight);
                 json.put("BikerType", bikerType);
-                json.put("Bike", bike);
+                //json.put("Bike", bike); TODO eliminate from model
                 String requestBody = json.toString();
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

@@ -595,7 +595,7 @@ public class MapsActivity extends FragmentActivity implements
             jsonObj.put("RouteID", routeID);
             jsonObj.put("Coordinates", getCoordinatesJSON()); //pin
             jsonObj.put("CityName", city); //pin
-            jsonObj.put("CountryName", country); //pin
+            jsonObj.put("CountryName", "República Dominicana"); //pin TODO non-static value
             jsonObj.put("StartTime", startTime);
             jsonObj.put("EndTime", endTime);
             jsonObj.put("Distance", distance);
@@ -612,7 +612,7 @@ public class MapsActivity extends FragmentActivity implements
 
     private JSONArray getCoordinatesJSON()  {
         JSONArray jsonLocationArray = new JSONArray();
-        for ( Location location : route) {
+        for (Location location : route) {
             JSONObject jsonLocation = new JSONObject();
             try {
                 jsonLocation.put("lat", location.getLatitude());
@@ -753,7 +753,8 @@ public class MapsActivity extends FragmentActivity implements
         protected String doInBackground(Void... urls) {
 
             try {
-                final String API_URL = "http://26e76265.ngrok.io/session";
+//                final String API_URL = "http://26e76265.ngrok.io/session";
+                final String API_URL = "http://26e76265.ngrok.io/api/speedforce/training/log";
                 URL url = new URL(API_URL);
 
                 String requestBody = sessionJSON.toString();
@@ -822,7 +823,7 @@ public class MapsActivity extends FragmentActivity implements
             conditions.put("04", "Nublado");
             conditions.put("09", "Llovizna");
             conditions.put("10", "Lluvioso");
-            conditions.put("11", "Tormenta Electrica");
+            conditions.put("11", "Tormenta Eléctrica");
             conditions.put("13", "Nevando");
             conditions.put("50", "Neblina");
         }

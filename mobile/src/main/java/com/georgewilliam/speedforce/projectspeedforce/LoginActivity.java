@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         if(toSend.isEmpty())
             toSend = "You sent an empty notification";
         Notification notification = new NotificationCompat.Builder(getApplication())
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.img_sflogo)
                 .setContentTitle("Speedforce")
                 .setContentText(toSend)
                 .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject();
                 json.put("Username", username);
                 json.put("Password", password);
-                json.put("Role", "Athlete");
+                json.put("Role", "Atleta");
                 String requestBody = json.toString();
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

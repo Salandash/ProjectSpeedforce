@@ -263,13 +263,13 @@ public class RegisterActivity extends AppCompatActivity {
         intent.putExtra("lastName", lastName);
         intent.putExtra("birthDate", birthDate);
         intent.putExtra("gender", gender);
-        intent.putExtra("telephone", telephone);
+        intent.putExtra("telephone", telephone); //TODO must be masked at input (only -)
         intent.putExtra("country", country);
         intent.putExtra("city", city);
         intent.putExtra("height", height);
         intent.putExtra("weight", weight);
         intent.putExtra("bikerType", bikerType);
-        intent.putExtra("bike", bike);
+        intent.putExtra("bike", bike); //TODO Eliminate from model
         startActivity(intent);
         // when MapsActivity closes
         finish();
