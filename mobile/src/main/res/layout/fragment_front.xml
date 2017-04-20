@@ -1,32 +1,51 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorPrimary"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.FrontFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!--<TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello Front Screen" />
+        android:text="Hello Front Screen" />-->
 
-    <Button
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/front_logo_id"
+        android:contentDescription="@string/asset_description"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LOGIN"
-        android:id="@+id/front_button_login_id" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="REGISTER"
-        android:id="@+id/front_button_register_id" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/img_logo_blue_filled" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/colorSuccessBlue"
+        android:textColor="@color/colorTextWhite"
+        android:text="@string/front_button_register_string"
+        android:id="@+id/front_button_register_id"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/front_debug_button_maps_id" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorSuccessBlue"
+        android:textColor="@color/colorTextWhite"
+        android:text="@string/front_button_login_string"
+        android:id="@+id/front_button_login_id"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/front_logo_id" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/front_button_login_id"
         android:text="DEBUG: Maps Activity"
         android:id="@+id/front_debug_button_maps_id" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -1,11 +1,5 @@
-/**
- * @file MapsActivity.java
- * @brief Fuente de la clase MapsActivity
- */
 package com.georgewilliam.speedforce.projectspeedforce;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -22,7 +16,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -37,8 +30,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
@@ -77,13 +68,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
-/**
- * Clase que representa el Activity y Fragment del mapa de la aplicación móvil.
- * El Fragment de este Activity se encuentra definido en su respectivo archivo de Layout.
- */
-public class MapsActivity extends AppCompatActivity implements
+public class ReceivedMapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -136,6 +122,8 @@ public class MapsActivity extends AppCompatActivity implements
     private int count = 0;
     private boolean isInSession = false;
     private ArrayList<Location> route = new ArrayList<Location>();
+    private ArrayList<Location> providedRoute = new ArrayList<Location>();
+
     private Chronometer chronometer;
     private Button startButton;
     private JSONObject sessionJSON;
@@ -148,7 +136,7 @@ public class MapsActivity extends AppCompatActivity implements
     private String sessionID; //uuid
     private String userID = "PlaceHolderUser";
     private String climateCondition = "Desconocido";
-    private double averageBPM = 0; //TODO
+    private double averageBPM = 0;
     private String routeID; //uuid
     private JSONArray coordinates;
     private String city = "Desconocido";
@@ -157,11 +145,11 @@ public class MapsActivity extends AppCompatActivity implements
     private String startTime;
     private String endTime;
     private double distance;
-    private double burntCalories = 0;
+    private double burntCalories = 0; //TODO
     private double relativeHumidity;
     private double temperature;
     private String trainingType;
-    private String sessionStatus = "Local";
+    private String sessionStatus = "Pendiente";
 
     // to calc calories
     private String gender;
@@ -197,7 +185,11 @@ public class MapsActivity extends AppCompatActivity implements
         mGoogleApiClient.connect();
 
         Bundle extras = getIntent().getExtras();
-        userID = extras.getString("Username");
+        sessionID = extras.getString("SessionID");
+        userID = extras.getString("UserID");
+        routeID = extras.getString("RouteID");
+        trainingType = extras.getString("TrainingTypeID");
+        sessionStatus = extras.getString("SessionStatusID");
 
         dbHelper = new DatabaseHelper(this, null, null, 1);
         populateUserData();
@@ -205,20 +197,27 @@ public class MapsActivity extends AppCompatActivity implements
         chronometer = (Chronometer) findViewById(R.id.chronometer_id);
         chronometer.setVisibility(View.GONE);
         startButton = (Button) findViewById(R.id.start_button_id);
-
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isInSession) {
                     endSession();
                 } else {
-                    displayTrainingTypeSelectDialog();
-                    //startSession();
+                    startSession();
                 }
             }
         });
 
-
+        if(providedRoute.size() > 0) {
+            mStartLocation = new LatLng(
+                    providedRoute.get(0).getLatitude(),
+                    providedRoute.get(0).getLongitude()
+            );
+            mFinishLocation = new LatLng(
+                    providedRoute.get(providedRoute.size() - 1).getLatitude(),
+                    providedRoute.get(providedRoute.size() - 1).getLongitude()
+            );
+        }
     }
 
     private void populateUserData() {
@@ -301,8 +300,6 @@ public class MapsActivity extends AppCompatActivity implements
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
-        // Refer to the reference doc for ConnectionResult to see what error codes might
-        // be returned in onConnectionFailed.
         Log.d(TAG, "Play services connection failed: ConnectionResult.getErrorCode() = "
                 + result.getErrorCode());
     }
@@ -443,21 +440,16 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        Intent intent;
         switch(menuItem.getItemId()) {
             case R.id.nav_training_id:
-                intent = new Intent(this, TrainingListActivity.class);
-                startActivity(intent);
+                finish();
                 break;
             case R.id.nav_profile_id:
+                finish();
                 break;
             default:
                 break;
         }
-
-//        LayoutInflater inflater = getLayoutInflater();
-//        LinearLayout container = (LinearLayout) findViewById(R.id.content_frame);
-//        inflater.inflate(R.layout.activity_main, container);
 
         // Highlight the selected item has been done by NavigationView
         //menuItem.setChecked(true);
@@ -549,41 +541,6 @@ public class MapsActivity extends AppCompatActivity implements
             return;
         }
 
-        /*if (mLocationPermissionGranted) {
-            // Get the businesses and other points of interest located
-            // nearest to the device's current location.
-            @SuppressWarnings("MissingPermission")
-            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
-                    .getCurrentPlace(mGoogleApiClient, null);
-            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-                @Override
-                public void onResult(@NonNull PlaceLikelihoodBuffer likelyPlaces) {
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                        // Add a marker for each place near the device's current location, with an
-                        // info window showing place information.
-                        String attributions = (String) placeLikelihood.getPlace().getAttributions();
-                        String snippet = (String) placeLikelihood.getPlace().getAddress();
-                        if (attributions != null) {
-                            snippet = snippet + "\n" + attributions;
-                        }
-
-                        mMap.addMarker(new MarkerOptions()
-                                .position(placeLikelihood.getPlace().getLatLng())
-                                .title((String) placeLikelihood.getPlace().getName())
-                                .snippet(snippet));
-                    }
-                    // Release the place likelihood buffer.
-                    likelyPlaces.release();
-                }
-            });
-        } else {
-            mMap.addMarker(new MarkerOptions()
-                    .position(mDefaultLocation)
-                    .title(getString(R.string.default_info_title))
-                    .snippet(getString(R.string.default_info_snippet)));
-        }*/
-
-
         mMap.addMarker(new MarkerOptions()
                 .position(mStartLocation)
                 .title("INICIO")
@@ -604,6 +561,20 @@ public class MapsActivity extends AppCompatActivity implements
                     .title("Checkpoint " + Integer.toString(++i))
                     .snippet(latlng.toString())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        }
+
+        if ( providedRoute.size() >= 2 )
+        {
+            PolylineOptions options = new PolylineOptions();
+            options.color( Color.parseColor( "#CCDDBB00" ) );
+            options.width( 15 );
+            options.visible( true );
+            for ( Location location : providedRoute )
+            {
+                options.add( new LatLng( location.getLatitude(),
+                        location.getLongitude() ) );
+            }
+            mMap.addPolyline( options );
         }
 
         if ( route.size() >= 2 )
@@ -667,24 +638,10 @@ public class MapsActivity extends AppCompatActivity implements
         }).start();
     }
 
-    // Inicia y detiene la sesion de entrenamiento
-/*    public void toggleSession(View view) {
-        if (isInSession) {
-            isInSession = false;
-            count = 0;
-            route.clear();
-            mMap.clear();
-            updateMarkers();
-        } else {
-            isInSession = true;
-        }
-    }*/
-
     private void startSession() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         startButton.setEnabled(false);
         sendMessageToWear(START_WEAR_ACTIVITY, "Session Started");
-        sessionID = UUID.randomUUID().toString();
         distance = 0;
         fetchCityAndCountry();
         isInSession = true;
@@ -707,7 +664,6 @@ public class MapsActivity extends AppCompatActivity implements
         startButton.setEnabled(false);
         sendMessageToWear(END_WEAR_ACTIVITY, "Session Ended");
         isInSession = false;
-        routeID = UUID.randomUUID().toString();
 
         endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         //Log.d("time capture", "Finish Time: " + endTime);
@@ -770,7 +726,7 @@ public class MapsActivity extends AppCompatActivity implements
             jsonObj.put("SessionStatusID", sessionStatus);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("JSONException", "MapsActivity.getSessionJSON");
+            Log.e("JSONException", "ReceivedMapsActivity.getSessionJSON");
         }
         return jsonObj;
     }
@@ -784,31 +740,10 @@ public class MapsActivity extends AppCompatActivity implements
                 jsonLocation.put("lng", location.getLongitude());
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e("JSONException", "MapsActivity.getCoordinatesJSON");
             }
             jsonLocationArray.put(jsonLocation);
         }
         return jsonLocationArray;
-    }
-
-    private void displayTrainingTypeSelectDialog() {
-        final String[] items = getResources().getStringArray(R.array.maps_dialog_trainingtype_items_stringarray);
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.maps_dialog_trainingtype_title_string)
-                .setItems(R.array.maps_dialog_trainingtype_items_stringarray, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        trainingType = items[i];
-                        dialogInterface.dismiss();
-                        Log.d("Dialog Select", "TRAINING TYPE: " + trainingType);
-                        toastMessage("Selected: " + trainingType);
-
-                        startSession();
-                    }
-                });
-        dialog.show();
     }
 
     private void goToResults(boolean success, String msg) {
@@ -822,7 +757,7 @@ public class MapsActivity extends AppCompatActivity implements
                     .show();
 
         }
-        dbHelper.insertSession(getSessionJSON());
+        dbHelper.updateSession(getSessionJSON());
     }
 
     public boolean getBPM() {
@@ -966,6 +901,7 @@ public class MapsActivity extends AppCompatActivity implements
                     if(getBPM()) {
                         successBPM = true;
                         burntCalories = getCalories();
+                        sessionStatus = "Local";
                         break;
                     }
                 }
@@ -1060,14 +996,3 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-

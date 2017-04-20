@@ -17,13 +17,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".SpeedforceApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/img_sflogo"
+        android:icon="@mipmap/img_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".SplashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,8 +33,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".ProfileEditActivity" />
+        <activity
+            android:name=".ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ProfileEditActivity"
+            android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -50,25 +56,48 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:label="Speedforce" />
-        <activity android:name=".FrontActivity" />
-        <activity android:name=".ApiActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".RegisterUserActivity" />
-        <service android:name=".WearMessageListenerService"
+            android:label="Speedforce"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FrontActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ApiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".RegisterUserActivity"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".WearMessageListenerService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
-                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
-                <action android:name="com.google.android.gms.wearable.CAPABILITY_CHANGED" />
-                <action android:name="com.google.android.gms.wearable.CHANNEL_EVENT" />
-                <data android:scheme="wear" android:host="*" />
+
+                <data
+                    android:host="*"
+                    android:scheme="wear" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".ReceivedMapsActivity"
+            android:label="@string/title_activity_received_maps"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TrainingListActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 
 public class ApiActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -87,6 +88,8 @@ public class ApiActivity extends AppCompatActivity implements GoogleApiClient.Co
                     responseView.setText(text);
                     if (text.equals("e")) {
                         sendMessage(END_ACTIVITY, text);
+                    } else if (text.equals("bpm")) {
+                        toastInt();
                     } else {
                         sendMessage( START_ACTIVITY, text );
                     }
@@ -99,7 +102,12 @@ public class ApiActivity extends AppCompatActivity implements GoogleApiClient.Co
         Log.d("ACTIVITY", "onCreate End");
     }
 
+    private String getBPM() {
+        return Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM());
+    }
+
     public void toastInt() {
+        Toast.makeText(this, getBPM(), Toast.LENGTH_LONG).show();
 //        Toast.makeText(this, "INT params are: " + Integer.toString(p1)+Integer.toString(p2), Toast.LENGTH_LONG).show();
     }
 
@@ -146,7 +154,7 @@ public class ApiActivity extends AppCompatActivity implements GoogleApiClient.Co
                 for(Node node : nodes.getNodes()) {
                     Log.d("MESSAGE", node + ": sending Msg");
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                            mApiClient, node.getId(), path, text.getBytes(Charset.forName("UTF-8")) ).await();
                     Log.d("MESSAGE", node + ": Msg sent");
                     if (!result.getStatus().isSuccess()) {
                         Log.d("MESSAGE", node + ": Msg send success!");

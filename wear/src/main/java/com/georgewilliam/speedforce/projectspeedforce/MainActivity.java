@@ -27,7 +27,13 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-public class MainActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
+import java.nio.charset.Charset;
+
+public class MainActivity extends Activity implements
+        MessageApi.MessageListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        SensorEventListener {
 
     private static final String WEAR_MESSAGE_PATH = "/bpm_data";
     //private static final int TYPE_PASSIVE_WELLNESS = 65538;
@@ -103,25 +109,30 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         Log.d("WEAR", "onStart");
         super.onStart();
         mApiClient.connect();
-        startSession();
     }
 
     @Override
     protected void onResume() {
         Log.d("WEAR", "OnResume");
         super.onResume();
-        //Register the listener
-        if (mSensorManager != null) {
-            Log.d("SENSOR", "Sensor Manager NOT NULL!");
-            mSensorManager.registerListener(this, mHeartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if (!operating) {
+            startSessionAfterResume();
+        } else {
+            endSession();
+            Toast.makeText(this, Double.toString(averageBPM), Toast.LENGTH_SHORT).show();//TODO
+            sendMessage(WEAR_MESSAGE_PATH, Double.toString(Math.round(averageBPM * 100.0) / 100.0));
+            finish();
         }
+//        //Register the listener
+//        if (mSensorManager != null) {
+//            Log.d("SENSOR", "Sensor Manager NOT NULL!");
+//            mSensorManager.registerListener(this, mHeartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+//        }
     }
 
     @Override
     protected void onPause() {
         Log.d("WEAR", "OnPause");
-        Toast.makeText(this, Double.toString(averageBPM), Toast.LENGTH_SHORT).show();//TODO
-        sendMessage(WEAR_MESSAGE_PATH, Double.toString(averageBPM));
         super.onPause();
         //Unregister the listener
         if (mSensorManager!=null)
@@ -250,7 +261,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 for(Node node : nodes.getNodes()) {
                     Log.d("MESSAGE", node + ": sending Msg");
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                            mApiClient, node.getId(), path, text.getBytes(Charset.forName("UTF-8")) ).await();
                     Log.d("MESSAGE", node + ": Msg sent");
                     if (!result.getStatus().isSuccess()) {
                         Log.d("MESSAGE", node + ": Msg send success!");
@@ -263,6 +274,18 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                         //extra action
                     }
                 });
+            }
+        }).start();
+    }
+
+    private void startSessionAfterResume() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!operating) {
+                    if (mButton != null)
+                        startSession();
+                }
             }
         }).start();
     }

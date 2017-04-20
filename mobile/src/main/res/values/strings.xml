@@ -3,8 +3,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps">Sesión de Entrenamiento</string>
     <string name="title_activity_login">Iniciar Sesion</string>
+
+    <string name="asset_description">Speedforce Asset</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -19,53 +21,58 @@
         completions."
     </string>
 
-    <!-- Login/Register Strings -->
-    <string name="login_textview_username_string">Username</string>
-    <string name="login_textview_password_string">Password</string>
-    <string name="login_button_signin_string">Sign In</string>
+    <!-- Front/Login/Register Strings -->
+    <string name="front_button_login_string">INICIAR</string>
+    <string name="front_button_register_string">REGISTRARSE</string>
+
+    <string name="login_textview_title_string">Iniciar Sesión</string>
+    <string name="login_textview_username_string">Nombre de Usuario</string>
+    <string name="login_textview_password_string">Contraseña</string>
+    <string name="login_button_signin_string">INICIAR SESIÓN</string>
+    <string name="login_textview_create_account_string">¿No tienes una cuenta?, Regístrate</string>
+
     <string name="register_textview_email_string">Email</string>
-    <string name="register_textview_confirm_password_string">Confirm Password</string>
-    <string name="register_button_next_string">Next</string>
-    <string name="register_button_signup_string">Sign Up</string>
-    <string name="register_textview_name_string">Name</string>
-    <string name="register_textview_lastname_string">Last Name</string>
-    <string name="register_textview_birthdate_string">Birthdate</string>
-    <string name="register_textview_weight_string">Weight (kg)</string>
-    <string name="register_textview_height_string">Height (m)</string>
-    <string name="register_textview_telephone_string">Telephone</string>
-    <string name="register_textview_country_string">Country</string>
-    <string name="register_textview_city_string">City</string>
-    <string name="register_textview_gender_string">Gender</string>
+    <string name="register_textview_confirm_password_string">Confirmar Contraseña</string>
+    <string name="register_button_next_string">SIGUIENTE</string>
+    <string name="register_button_signup_string">REGISTRARSE</string>
+    <string name="register_textview_name_string">Nombre</string>
+    <string name="register_textview_lastname_string">Apellido</string>
+    <string name="register_textview_birthdate_string">Fecha de Nacimiento</string>
+    <string name="register_textview_weight_string">Peso (kg)</string>
+    <string name="register_textview_height_string">Altura (m)</string>
+    <string name="register_textview_telephone_string">Número de Teléfono</string>
+    <string name="register_textview_country_string">País</string>
+    <string name="register_textview_city_string">Ciudad</string>
+    <string name="register_textview_gender_string">Sexo</string>
     <string name="register_radiobutton_masculine_string">M</string>
     <string name="register_radiobutton_femenine_string">F</string>
-    <string name="register_textview_bikertype_string">Biker Type</string>
-    <string name="register_textview_bike_string">Bike</string>
-    <string name="register_textview_title_string">Create User</string>
-    <string name="login_textview_title_string">Login</string>
+    <string name="register_textview_bikertype_string">Tipo de Ciclista</string>
+    <string name="register_textview_bike_string">Bicicleta</string>
+    <string name="register_textview_title_string">Crear Cuenta</string>
     <string-array name="register_spinner_country_stringarray">
         <item>Dominican Republic</item>
         <item>Mexico</item>
         <item>Panama</item>
     </string-array>
 
-    <!-- Maps Activity Strings -->
-    <string name="maps_dialog_trainingtype_title_string">Select Training Type</string>
+    <!-- Google Maps Activities Strings -->
+    <string name="default_info_title">Maps: Default Info Title</string>
+    <string name="default_info_snippet">Maps: Default Information Snippet</string>
+    <string name="maps_button_start_string">EMPEZAR</string>
+    <string name="maps_button_stop_string">TERMINAR</string>
+    <string name="maps_dialog_trainingtype_title_string">Seleccione Tipo de Entrenamiento</string>
     <string-array name="maps_dialog_trainingtype_items_stringarray">
         <item>Distancia</item>
         <item>Resistencia</item>
         <item>Velocidad</item>
     </string-array>
 
-    <!-- Strings related to navigation drawer -->
+    <!-- Navigation Drawer Strings -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
-    <!-- Strings related to Google Maps Activity -->
-    <string name="default_info_title">Maps: Default Info Title</string>
-    <string name="default_info_snippet">Maps: Default Information Snippet</string>
-
-    <!-- API Strings -->
-    <string name="ngrok_url">http://bdbd5649.ngrok.io</string>
+    <!-- Other Strings -->
+    <string name="title_activity_received_maps">Sesión de Entrenamiento</string>
 
 
 </resources>

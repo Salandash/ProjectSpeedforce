@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/img_background_mobile_split"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.RegisterActivity">
 
     <ScrollView
@@ -21,14 +22,21 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="top|center"
                 android:textSize="@dimen/cast_intro_overlay_focus_radius"
-                android:text="@string/register_textview_title_string" />
+                android:text="@string/register_textview_title_string" />-->
+
+            <ImageView
+                android:contentDescription="@string/asset_description"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/img_logo_blue_filled" />
 
             <TextView
                 android:id="@+id/register_textview_name_id"
@@ -37,6 +45,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_name_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_name_string" />
 
             <EditText
@@ -45,10 +54,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="15"
-                android:inputType="textPersonName">
-
-                <requestFocus />
-            </EditText>
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
+                android:inputType="textPersonName" />
 
             <TextView
                 android:id="@+id/register_textview_lastname_id"
@@ -57,6 +65,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_lastname_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_lastname_string" />
 
             <EditText
@@ -65,6 +74,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="15"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="textPersonName" />
 
             <TextView
@@ -74,6 +85,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_email_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_email_string" />
 
             <EditText
@@ -83,6 +95,8 @@
                 android:layout_marginStart="20dp"
                 android:paddingTop="10dp"
                 android:ems="15"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="textEmailAddress" />
 
             <!--<TextView
@@ -143,6 +157,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_birthdate_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_birthdate_string" />
 
             <EditText
@@ -151,6 +166,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="15"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="date"
                 android:focusable="false" />
 
@@ -161,6 +178,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_gender_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_gender_string" />
 
             <!--<EditText
@@ -183,6 +201,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
+                    android:textColor="@color/colorTextBlack"
                     android:text="@string/register_radiobutton_masculine_string" />
 
                 <RadioButton
@@ -190,6 +209,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
+                    android:textColor="@color/colorTextBlack"
                     android:text="@string/register_radiobutton_femenine_string"
                     android:checked="false" />
 
@@ -202,6 +222,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_country_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_country_string" />
 
             <EditText
@@ -210,6 +231,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="text" />
 
             <Spinner
@@ -226,6 +249,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_city_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_city_string" />
 
             <EditText
@@ -234,6 +258,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="text" />
 
             <TextView
@@ -243,6 +269,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_telephone_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_telephone_string" />
 
             <EditText
@@ -251,6 +278,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="phone" />
 
             <TextView
@@ -260,6 +289,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_weight_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_weight_string" />
 
             <EditText
@@ -267,7 +297,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:ems="15"
+                android:ems="10"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="numberDecimal" />
 
             <TextView
@@ -277,6 +309,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_height_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_height_string" />
 
             <EditText
@@ -285,6 +318,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="numberDecimal" />
 
             <TextView
@@ -294,6 +329,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_bikertype_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_bikertype_string" />
 
             <EditText
@@ -302,9 +338,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="text" />
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/register_textview_bike_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -319,7 +357,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="10"
-                android:inputType="text" />
+                android:inputType="text" />-->
 
 
             <Button
@@ -328,6 +366,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="34dp"
+                android:background="@color/colorSuccessBlue"
+                android:textColor="@color/colorTextWhite"
                 android:text="@string/register_button_next_string" />
 
         </LinearLayout>

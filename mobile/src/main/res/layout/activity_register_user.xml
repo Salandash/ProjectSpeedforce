@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/img_background_mobile_split"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.RegisterUserActivity">
 
     <ScrollView
@@ -20,13 +21,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="top|center"
                 android:textSize="@dimen/cast_intro_overlay_focus_radius"
-                android:text="@string/register_textview_title_string" />
+                android:textColor="@color/colorTextBlack"
+                android:text="@string/register_textview_title_string" />-->
+
+            <ImageView
+                android:contentDescription="@string/asset_description"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/img_logo_blue_filled" />
 
             <TextView
                 android:id="@+id/register_textview_username_id"
@@ -35,6 +45,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_username_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/login_textview_username_string" />
 
             <EditText
@@ -43,10 +54,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="15"
-                android:inputType="textPersonName">
-
-                <requestFocus />
-            </EditText>
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
+                android:inputType="textPersonName" />
 
             <TextView
                 android:id="@+id/register_textview_password_id"
@@ -55,6 +65,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_password_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/login_textview_password_string" />
 
             <EditText
@@ -63,6 +74,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="15"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="textPassword" />
 
             <TextView
@@ -72,6 +85,7 @@
                 android:layout_marginTop="47dp"
                 android:layout_marginStart="20dp"
                 android:labelFor="@+id/register_edittext_confirm_password_id"
+                android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_confirm_password_string" />
 
             <EditText
@@ -80,6 +94,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="15"
+                android:backgroundTint="@color/colorTextBlack"
+                android:textColor="@color/colorTextBlack"
                 android:inputType="textPassword" />
 
 
@@ -89,6 +105,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="34dp"
+                android:background="@color/colorSuccessBlue"
+                android:textColor="@color/colorTextWhite"
                 android:text="@string/register_button_signup_string" />
 
         </LinearLayout>

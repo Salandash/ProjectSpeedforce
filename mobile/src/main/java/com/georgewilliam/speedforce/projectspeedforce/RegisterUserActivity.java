@@ -41,26 +41,30 @@ public class RegisterUserActivity extends AppCompatActivity {
     private double height;
     private double weight;
     private String bikerType;
-    private String bike;
+    //private String bike;
+
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_user);
 
+        dbHelper = new DatabaseHelper(this, null, null, 1);
+
         Bundle extras = getIntent().getExtras();
-        email = extras.getString("email");
-        name = extras.getString("name");
-        lastName = extras.getString("lastName");
-        birthDate = extras.getString("birthDate");
-        gender = extras.getString("gender");
-        telephone = extras.getString("telephone");
-        country = extras.getString("country");
-        city = extras.getString("city");
-        height = extras.getDouble("height");
-        weight = extras.getDouble("weight");
-        bikerType = extras.getString("bikerType");
-        bike = extras.getString("bike");
+        email = extras.getString("Email");
+        name = extras.getString("Name");
+        lastName = extras.getString("LastName");
+        birthDate = extras.getString("BirthDate");
+        gender = extras.getString("Sex");
+        telephone = extras.getString("TelephoneNumber");
+        country = extras.getString("CountryName");
+        city = extras.getString("CityName");
+        height = extras.getDouble("Height");
+        weight = extras.getDouble("Weight");
+        bikerType = extras.getString("BikerType");
+        //bike = extras.getString("Bike");
 
         editTextUsername = (EditText) findViewById(R.id.register_edittext_username_id);
         editTextPassword = (EditText) findViewById(R.id.register_edittext_password_id);
@@ -93,13 +97,43 @@ public class RegisterUserActivity extends AppCompatActivity {
     }
 
     public void login(String msg) {
+
+        try {
+            dbHelper.insertUser(getUserJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSONException", "RegisterUserActivity.login");
+            toastMessage("No se pudo guardar usuario localmente.");
+        }
+
         Intent intent;
         intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("username", username);
+        intent.putExtra("Username", username);
         intent.putExtra("message", msg);
         startActivity(intent);
         // when MapsActivity closes
         finish();
+    }
+
+    public JSONObject getUserJSON() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("Username", username);
+        json.put("Password", password);
+        json.put("Role", "Atleta");
+        json.put("Email", email);
+        json.put("Name", name);
+        json.put("LastName", lastName);
+        json.put("Sex", gender);
+        json.put("BirthDate", birthDate);
+        json.put("CityName", city);
+        json.put("CountryName", country);
+        json.put("TelephoneNumber", telephone);
+        json.put("Height", height);
+        json.put("Weight", weight);
+        json.put("BikerType", bikerType);
+        //json.put("Bike", bike); TODO eliminate from model
+        return json;
     }
 
     class SingUpTask extends AsyncTask<Void, Void, String> {
@@ -117,22 +151,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 //final String API_URL = "http://26e76265.ngrok.io/api/speedforce/users/registerA";
                 URL url = new URL(API_URL);
 
-                JSONObject json = new JSONObject();
-                json.put("Username", username);
-                json.put("Password", password);
-                json.put("Role", "Atleta");
-                json.put("Email", email);
-                json.put("Name", name);
-                json.put("LastName", lastName);
-                json.put("Sex", gender);
-                json.put("BirthDate", birthDate);
-                json.put("CityName", city);
-                json.put("CountryName", country);
-                json.put("TelephoneNumber", telephone);
-                json.put("Height", height);
-                json.put("Weight", weight);
-                json.put("BikerType", bikerType);
-                //json.put("Bike", bike); TODO eliminate from model
+                JSONObject json = getUserJSON();
                 String requestBody = json.toString();
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

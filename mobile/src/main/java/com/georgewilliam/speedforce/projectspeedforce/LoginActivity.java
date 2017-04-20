@@ -1,10 +1,7 @@
 package com.georgewilliam.speedforce.projectspeedforce;
 
-import android.app.Notification;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     // Sign In
     private Button buttonSignIn;
     // Message
-    private TextView textViewMessage;
+    private TextView textViewRegister;
 
     private String username;
 
@@ -53,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         editTextUsername = (EditText) findViewById(R.id.login_edittext_username_id);
         editTextPassword = (EditText) findViewById(R.id.login_edittext_password_id);
         buttonSignIn = (Button) findViewById(R.id.login_button_signin_id);
+        textViewRegister = (TextView) findViewById(R.id.login_textview_create_account_id);
 
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
 
@@ -74,7 +71,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        sendNotification();
+        textViewRegister.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                createAccount();
+            }
+        });
+    }
+
+    private void createAccount() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
     }
 
     public void toastResponse(String msg) {
@@ -82,22 +90,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(String msg) {
-        Intent intent;
-        intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("username", username);
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("Username", username);
         intent.putExtra("message", msg);
         startActivity(intent);
         // when MapsActivity closes
         finish();
     }
 
-    //////
+    /*//////
     public void sendNotification() {
         String toSend = "Login Activity Opened!!";
         if(toSend.isEmpty())
             toSend = "You sent an empty notification";
         Notification notification = new NotificationCompat.Builder(getApplication())
-                .setSmallIcon(R.mipmap.img_sflogo)
+                .setSmallIcon(R.mipmap.img_logo)
                 .setContentTitle("Speedforce")
                 .setContentText(toSend)
                 .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
@@ -105,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplication());
         int notificationId = 1;
         notificationManager.notify(notificationId, notification);
-    }
+    }*/
 
     class SingInTask extends AsyncTask<Void, Void, String> {
 

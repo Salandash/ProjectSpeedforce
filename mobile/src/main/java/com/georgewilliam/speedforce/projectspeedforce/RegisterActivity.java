@@ -3,30 +3,17 @@ package com.georgewilliam.speedforce.projectspeedforce;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -48,7 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
 //    private EditText editTextCountry;
     private EditText editTextCity;
     private EditText editTextBikerType;
-    private EditText editTextBike;
+    //private EditText editTextBike;
 
     // Sign In
     private Button buttonNext;
@@ -73,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
     private String country;
     private String city;
     private String bikerType;
-    private String bike;
+    //private String bike;
 
 
     private Calendar myCalendar;
@@ -102,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
 //        editTextCountry = (EditText) findViewById(R.id.register_edittext_country_id);
         editTextCity = (EditText) findViewById(R.id.register_edittext_city_id);
         editTextBikerType = (EditText) findViewById(R.id.register_edittext_bikertype_id);
-        editTextBike = (EditText) findViewById(R.id.register_edittext_bike_id);
+        //editTextBike = (EditText) findViewById(R.id.register_edittext_bike_id);
 
         buttonNext = (Button) findViewById(R.id.register_button_next_id);
         radioButtonM = (RadioButton) findViewById(R.id.register_radiobutton_masculine_id);
@@ -162,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
                 country = spinnerCountry.getSelectedItem().toString();
                 city = String.valueOf(editTextCity.getText());
                 bikerType = String.valueOf(editTextBikerType.getText());
-                bike = String.valueOf(editTextBike.getText());
+                //bike = String.valueOf(editTextBike.getText());
 
 
                 // Validating Email
@@ -225,7 +212,6 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (radioButtonM.isChecked()) {
                     gender = "Masculino";
-                    toastMessage(gender);
                 }
             }
         });
@@ -236,7 +222,6 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (radioButtonF.isChecked()) {
                     gender = "Femenino";
-                    toastMessage(gender);
                 }
             }
         });
@@ -258,117 +243,21 @@ public class RegisterActivity extends AppCompatActivity {
     public void nextRegisterPage() {
         Intent intent;
         intent = new Intent(this, RegisterUserActivity.class);
-        intent.putExtra("email", email);
-        intent.putExtra("name", name);
-        intent.putExtra("lastName", lastName);
-        intent.putExtra("birthDate", birthDate);
-        intent.putExtra("gender", gender);
-        intent.putExtra("telephone", telephone); //TODO must be masked at input (only -)
-        intent.putExtra("country", country);
-        intent.putExtra("city", city);
-        intent.putExtra("height", height);
-        intent.putExtra("weight", weight);
-        intent.putExtra("bikerType", bikerType);
-        intent.putExtra("bike", bike); //TODO Eliminate from model
+        intent.putExtra("Email", email);
+        intent.putExtra("Name", name);
+        intent.putExtra("LastName", lastName);
+        intent.putExtra("BirthDate", birthDate);
+        intent.putExtra("Sex", gender);
+        intent.putExtra("TelephoneNumber", telephone); //TODO must be masked at input (only -)
+        intent.putExtra("CountryName", country);
+        intent.putExtra("CityName", city);
+        intent.putExtra("Height", height);
+        intent.putExtra("Weight", weight);
+        intent.putExtra("BikerType", bikerType);
+        //intent.putExtra("Bike", bike); //TODO Eliminate from model
         startActivity(intent);
         // when MapsActivity closes
         finish();
     }
-
-    /*public void login(String msg) {
-        Intent intent;
-        intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("username", username);
-        intent.putExtra("message", msg);
-        startActivity(intent);
-        // when MapsActivity closes
-        finish();
-    }*/
-
-    /*class SingUpTask extends AsyncTask<Void, Void, String> {
-
-        private Exception exception;
-
-        protected void onPreExecute() {
-
-        }
-
-        protected String doInBackground(Void... urls) {
-
-            try {
-                final String API_URL = "http://26e76265.ngrok.io/register";
-                URL url = new URL(API_URL);
-
-                JSONObject json = new JSONObject();
-                json.put("email", email);
-                json.put("username", username);
-                json.put("password", password);
-                json.put("name", name);
-                json.put("lastName", lastName);
-                json.put("birthDate", birthDate);
-                json.put("weight", weightDouble);
-                json.put("height", heightDouble);
-                json.put("gender", gender);
-                json.put("telephone", telephone);
-                json.put("country", country);
-                json.put("city", city);
-                json.put("cyclistType", cyclistType);
-                String requestBody = json.toString();
-
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                try {
-                    //for output
-                    urlConnection.setDoOutput(true);
-                    urlConnection.setRequestMethod("POST");
-                    urlConnection.setRequestProperty("Content-Type", "application/json");
-                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "utf-8"));
-                    bufferedWriter.write(requestBody);
-                    bufferedWriter.flush();
-                    bufferedWriter.close();
-
-                    //for input
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
-                    }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                }
-                finally{
-                    urlConnection.disconnect();
-                }
-            }
-            catch(Exception e) {
-                Log.e("ERROR", e.getMessage(), e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String response) {
-            if(response == null) {
-                response = "THERE WAS AN ERROR";
-            }
-            Log.i("INFO", response);
-
-            boolean created = false;
-            String msg = "NO MESSAGE...";
-
-            try {
-                JSONObject responseJSON = new JSONObject(response);
-                created = responseJSON.getBoolean("success");
-                msg = responseJSON.getString("message");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            toastMessage(msg);
-
-            if (created) {
-                login(msg);
-            }
-        }
-    }*/
 
 }
