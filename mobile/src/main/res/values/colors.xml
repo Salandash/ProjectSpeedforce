@@ -6,5 +6,7 @@
     <color name="colorSuccessBlue">#2196F3</color>
     <color name="colorDangerRed">#FF5252</color>
     <color name="colorTextWhite">#FFFFFF</color>
+    <color name="colorTextGray">#C2C2C2</color>
     <color name="colorTextBlack">#000000</color>
+    #d3d3d3
 </resources>

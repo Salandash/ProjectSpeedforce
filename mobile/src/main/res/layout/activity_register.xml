@@ -225,7 +225,7 @@
                 android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_country_string" />
 
-            <EditText
+            <!--<EditText
                 android:id="@+id/register_edittext_country_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -233,7 +233,7 @@
                 android:ems="10"
                 android:backgroundTint="@color/colorTextBlack"
                 android:textColor="@color/colorTextBlack"
-                android:inputType="text" />
+                android:inputType="text" />-->
 
             <Spinner
                 android:id="@+id/register_spinner_country_id"
@@ -332,7 +332,7 @@
                 android:textColor="@color/colorTextBlack"
                 android:text="@string/register_textview_bikertype_string" />
 
-            <EditText
+            <!--<EditText
                 android:id="@+id/register_edittext_bikertype_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -340,7 +340,14 @@
                 android:ems="10"
                 android:backgroundTint="@color/colorTextBlack"
                 android:textColor="@color/colorTextBlack"
-                android:inputType="text" />
+                android:inputType="text" />-->
+
+            <Spinner
+                android:id="@+id/register_spinner_bikertype_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:entries="@array/register_spinner_bikertype_stringarray" />
 
             <!--<TextView
                 android:id="@+id/register_textview_bike_id"
@@ -362,10 +369,12 @@
 
             <Button
                 android:id="@+id/register_button_next_id"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="34dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 android:background="@color/colorSuccessBlue"
                 android:textColor="@color/colorTextWhite"
                 android:text="@string/register_button_next_string" />

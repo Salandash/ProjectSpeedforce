@@ -1,10 +1,9 @@
 package com.georgewilliam.speedforce.projectspeedforce;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -55,7 +54,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -66,8 +64,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Locale;
 
 public class ReceivedMapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -102,7 +98,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     // A default location (Sydney, Australia) and default zoom to use when location permission is
     // not granted.
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private static final int DEFAULT_ZOOM = 40; //15
+    private static final int DEFAULT_ZOOM = 17;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
@@ -118,7 +114,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     private static final String KEY_LOCATION = "location";
 
     // Anadido adicionalmente
-    private static final int CAPTURE_INTERVAL = 3;
+    private static final int CAPTURE_INTERVAL = 1;
     private int count = 0;
     private boolean isInSession = false;
     private ArrayList<Location> route = new ArrayList<Location>();
@@ -136,7 +132,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     private String sessionID; //uuid
     private String userID = "PlaceHolderUser";
     private String climateCondition = "Desconocido";
-    private double averageBPM = 0;
+    private double averageBPM = -1;
     private String routeID; //uuid
     private JSONArray coordinates;
     private String city = "Desconocido";
@@ -145,9 +141,9 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     private String startTime;
     private String endTime;
     private double distance;
-    private double burntCalories = 0; //TODO
+    private double burntCalories = -1;
     private double relativeHumidity;
-    private double temperature;
+    private double temperature = -1000;
     private String trainingType;
     private String sessionStatus = "Pendiente";
 
@@ -156,7 +152,8 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     private double weight;
     private int age;
     private double minutesElapsed = 0;
-
+    private long timeElapsed = 0;
+    private double distanceKM = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,12 +184,13 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         Bundle extras = getIntent().getExtras();
         sessionID = extras.getString("SessionID");
         userID = extras.getString("UserID");
-        routeID = extras.getString("RouteID");
-        trainingType = extras.getString("TrainingTypeID");
-        sessionStatus = extras.getString("SessionStatusID");
+//        routeID = extras.getString("RouteID");
+//        trainingType = extras.getString("TrainingTypeID");
+//        sessionStatus = extras.getString("SessionStatusID");
 
         dbHelper = new DatabaseHelper(this, null, null, 1);
         populateUserData();
+        populateSessionData();
 
         chronometer = (Chronometer) findViewById(R.id.chronometer_id);
         chronometer.setVisibility(View.GONE);
@@ -218,6 +216,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
                     providedRoute.get(providedRoute.size() - 1).getLongitude()
             );
         }
+
     }
 
     private void populateUserData() {
@@ -243,6 +242,29 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
 
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
+        }
+    }
+
+    private void populateSessionData() {
+        JSONObject json = dbHelper.getSession(sessionID);
+        try {
+            trainingType = json.getString("TrainingTypeID");
+            country = json.getString("CountryName");
+            city = json.getString("CityName");
+            routeID = json.getString("RouteID");
+            JSONArray array = json.getJSONArray("Coordinates");
+            JSONObject obj;
+            Location location;
+            for (int i = 0; i < array.length(); i++) {
+                obj = array.getJSONObject(i);
+                location = new Location("");
+                location.setLatitude(obj.getDouble("lat"));
+                location.setLongitude(obj.getDouble("lng"));
+                providedRoute.add(location);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSONException", "ReceivedMapsActivity.populateSessionData");
         }
     }
 
@@ -546,22 +568,12 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
                 .title("INICIO")
                 .snippet(mStartLocation.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
         mMap.addMarker(new MarkerOptions()
                 .position(mFinishLocation)
                 .title("FIN")
                 .snippet(mFinishLocation.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-        LatLng latlng;
-        int i = 0;
-        for (Location location : route) {
-            latlng = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.addMarker(new MarkerOptions()
-                    .position(latlng)
-                    .title("Checkpoint " + Integer.toString(++i))
-                    .snippet(latlng.toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        }
 
         if ( providedRoute.size() >= 2 )
         {
@@ -580,8 +592,8 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         if ( route.size() >= 2 )
         {
             PolylineOptions options = new PolylineOptions();
-            options.color( Color.parseColor( "#CC0000FF" ) );
-            options.width( 5 );
+            options.color( Color.parseColor( "#2196F3" ) );
+            options.width( 10 );
             options.visible( true );
             for ( Location location : route )
             {
@@ -643,7 +655,6 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         startButton.setEnabled(false);
         sendMessageToWear(START_WEAR_ACTIVITY, "Session Started");
         distance = 0;
-        fetchCityAndCountry();
         isInSession = true;
 
         startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
@@ -652,9 +663,12 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         // Calling Weather API
         new FetchWeatherTask().execute();
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        chronometer.setVisibility(View.VISIBLE);
+        //chronometer.setVisibility(View.VISIBLE);
         startButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorDangerRed));
         startButton.setText(getResources().getString(R.string.maps_button_stop_string));
         startButton.setEnabled(true);
@@ -667,11 +681,15 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
 
         endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         //Log.d("time capture", "Finish Time: " + endTime);
-
-        minutesElapsed = (double)((SystemClock.elapsedRealtime() - chronometer.getBase()) / 60000);
+        distanceKM = (double)Math.round(distance / 100) / 10.0; // m -> km
+        timeElapsed = SystemClock.elapsedRealtime() - chronometer.getBase();
+        minutesElapsed = ((double)timeElapsed) / 60000;
         Log.d("Time", "Minutes Elapsed: " + Double.toString(minutesElapsed));
         chronometer.stop();
         chronometer.setVisibility(View.GONE);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().show();
+        }
         //sessionJSON = getSessionJSON();
 
         //Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
@@ -688,23 +706,6 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    private void fetchCityAndCountry() {
-        Geocoder geoCoder = new Geocoder(getBaseContext(), Locale.getDefault());
-        try {
-            List<Address> addresses = geoCoder.getFromLocation(
-                    mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
-            if (addresses.size() > 0) {
-                city = addresses.get(0).getLocality();
-                country = addresses.get(0).getCountryName();
-                Log.d("address capture", "City: " + city + ", Country: " + country);
-            }
-        }
-        catch (IOException e) {
-            Log.e("Address ERROR", "Address retrieve failed");
-            e.printStackTrace();
-        }
-    }
-
     private JSONObject getSessionJSON() {
         JSONObject jsonObj = new JSONObject();
         try {
@@ -713,12 +714,12 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
             jsonObj.put("ClimateConditionID", climateCondition);
             jsonObj.put("AverageBPM", averageBPM);
             jsonObj.put("RouteID", routeID);
-            jsonObj.put("Coordinates", coordinates); //pin
-            jsonObj.put("CityName", city); //pin
-            jsonObj.put("CountryName", "República Dominicana"); //pin TODO non-static value
+            jsonObj.put("Coordinates", coordinates);
+            jsonObj.put("CityName", city);
+            jsonObj.put("CountryName", country);
             jsonObj.put("StartTime", startTime);
             jsonObj.put("EndTime", endTime);
-            jsonObj.put("Distance", distance);
+            jsonObj.put("Distance", distanceKM);
             jsonObj.put("BurntCalories", burntCalories);
             jsonObj.put("RelativeHumidity", relativeHumidity);
             jsonObj.put("Temperature", temperature);
@@ -747,17 +748,31 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     }
 
     private void goToResults(boolean success, String msg) {
+        //sessionStatus = "Local"; // TODO
         if (success) {
             sessionStatus = "Sincronizada";
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this,
-                    "Results Post FAILED " + Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM()),
+                    "No se pudo conectar con servicio.", //+ Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM()),
                     Toast.LENGTH_LONG)
                     .show();
 
         }
         dbHelper.updateSession(getSessionJSON());
+
+        Intent intent = new Intent(this, ResultsActivity.class);
+
+        intent.putExtra("TrainingTypeID", trainingType);
+        intent.putExtra("Distance", distanceKM);
+        intent.putExtra("TimeElapsed", timeElapsed);
+        intent.putExtra("AverageBPM", averageBPM);
+        intent.putExtra("BurntCalories", burntCalories);
+        intent.putExtra("ClimateConditionID", climateCondition);
+        intent.putExtra("Temperature", temperature);
+
+        startActivity(intent);
+        finish();
     }
 
     public boolean getBPM() {
@@ -773,15 +788,21 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         double athleteFactor = 0;
         double durationFactor = 0;
 
+//        if (gender.equals("Masculino")) {
+//            athleteFactor = ((double)age * 0.2017) - (weight * 0.09036) + (averageBPM * 0.6309) - 55.0969;
+//        } else if (gender.equals("Femenino")) {
+//            athleteFactor = ((double)age * 0.074) - (weight * 0.05741) + (averageBPM * 0.4472) - 20.4022;
+//        }
+
         if (gender.equals("Masculino")) {
-            athleteFactor = ((double)age * 0.2017) - (weight * 0.09036) + (averageBPM * 0.6309) - 55.0969;
+            athleteFactor = ((double)age * 0.2017) + (weight * 0.453592 * 0.1988) + (averageBPM * 0.6309) - 55.0969;
         } else if (gender.equals("Femenino")) {
-            athleteFactor = ((double)age * 0.074) - (weight * 0.05741) + (averageBPM * 0.4472) - 20.4022;
+            athleteFactor = ((double)age * 0.074) + (weight * 0.453592 * 0.1263) + (averageBPM * 0.4472) - 20.4022;
         }
 
         durationFactor = minutesElapsed / 4.184;
 
-        return (athleteFactor * durationFactor);
+        return (double)Math.round(athleteFactor * durationFactor * 10) / 10.0;
     }
 
     public void toastMessage(String msg) {
@@ -876,8 +897,6 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
 
     class PostResultsTask extends AsyncTask<Void, Void, String> {
 
-        private Exception exception;
-
         protected void onPreExecute() {
 
         }
@@ -885,13 +904,12 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
         protected String doInBackground(Void... urls) {
 
             try {
-//                final String API_URL = "http://26e76265.ngrok.io/session";
-                final String API_URL = "http://26e76265.ngrok.io/api/speedforce/training/log";
+                final String API_URL = "http://speedforceservice.azurewebsites.net/api/training/logsession";
                 URL url = new URL(API_URL);
 
                 boolean successBPM = false;
                 Date stamp = new Date();
-                while((new Date()).getTime() - stamp.getTime() <= 10000) {
+                while((new Date()).getTime() - stamp.getTime() <= 15000) {
 //                    if(((SpeedforceApplication) getApplication()).isChanged()
 //                            && !((SpeedforceApplication) getApplication()).isExpired(new Date())) {
 //                        averageBPM = ((SpeedforceApplication) getApplication()).getAverageBPM();
@@ -901,7 +919,6 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
                     if(getBPM()) {
                         successBPM = true;
                         burntCalories = getCalories();
-                        sessionStatus = "Local";
                         break;
                     }
                 }
@@ -952,15 +969,26 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
             Log.i("INFO", response);
 
             boolean posted = false;
-            String msg = "NO MESSAGE...";
+            String msg = "No Hubo Mensaje...";
+            String sess = null;
 
             try {
                 JSONObject responseJSON = new JSONObject(response);
-                posted = responseJSON.getBoolean("success");
-                msg = responseJSON.getString("message");
+                //posted = responseJSON.getBoolean("success");
+                sess = responseJSON.getString("SessionID");
+                //msg = responseJSON.getString("message");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            if (sess != null && sess.equals(sessionID)) {
+                posted = true;
+                msg = "Sesión Enviada Exitosamente";
+            } else {
+                posted = false;
+                msg = "No se pudo enviar la sesión";
+            }
+
             goToResults(posted, msg);
         }
     }

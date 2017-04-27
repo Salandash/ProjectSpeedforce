@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class SpeedforceApplication extends Application {
 
-    private static final int EXPIRATION_MILLISECS = 10000;
+    private static final int EXPIRATION_MILLISECS = 15000;
     private double averageBPM = 0;
     private boolean changed = false;
     private Date lastChanged = new Date();

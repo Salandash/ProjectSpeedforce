@@ -20,9 +20,6 @@ public class WearMessageListenerService extends WearableListenerService {
         String msg = new String(messageEvent.getData(), Charset.forName("UTF-8"));
         Log.d("SERVICE LISTENER", "Message Received, data: " + msg);
         if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
-//            Intent intent = new Intent( this, LoginActivity.class );
-//            intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-//            startActivity( intent );
             try {
                 ((SpeedforceApplication) this.getApplication()).setAverageBPM(Double.parseDouble(msg));
             } catch (NumberFormatException e) {

@@ -37,8 +37,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
@@ -116,23 +114,19 @@ public class MapsActivity extends AppCompatActivity implements
     // A default location (Sydney, Australia) and default zoom to use when location permission is
     // not granted.
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private static final int DEFAULT_ZOOM = 40; //15
+    private static final int DEFAULT_ZOOM = 17;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
     // The geographical location where the device is currently located.
     private Location mCurrentLocation;
 
-    // Start location and end location.
-    private LatLng mStartLocation = new LatLng(18.450915, -69.952788);
-    private LatLng mFinishLocation = new LatLng(18.453427, -69.941788);
-
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
 
     // Anadido adicionalmente
-    private static final int CAPTURE_INTERVAL = 3;
+    private static final int CAPTURE_INTERVAL = 1;
     private int count = 0;
     private boolean isInSession = false;
     private ArrayList<Location> route = new ArrayList<Location>();
@@ -148,7 +142,7 @@ public class MapsActivity extends AppCompatActivity implements
     private String sessionID; //uuid
     private String userID = "PlaceHolderUser";
     private String climateCondition = "Desconocido";
-    private double averageBPM = 0; //TODO
+    private double averageBPM = -1;
     private String routeID; //uuid
     private JSONArray coordinates;
     private String city = "Desconocido";
@@ -157,9 +151,9 @@ public class MapsActivity extends AppCompatActivity implements
     private String startTime;
     private String endTime;
     private double distance;
-    private double burntCalories = 0;
+    private double burntCalories = -1;
     private double relativeHumidity;
-    private double temperature;
+    private double temperature = -1000;
     private String trainingType;
     private String sessionStatus = "Local";
 
@@ -168,6 +162,8 @@ public class MapsActivity extends AppCompatActivity implements
     private double weight;
     private int age;
     private double minutesElapsed = 0;
+    private long timeElapsed = 0;
+    private double distanceKM = 0;
 
 
     @Override
@@ -182,7 +178,6 @@ public class MapsActivity extends AppCompatActivity implements
 
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_maps);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -223,11 +218,13 @@ public class MapsActivity extends AppCompatActivity implements
 
     private void populateUserData() {
         JSONObject json = dbHelper.getUser(userID);
+        Log.d("Loaded User Data", json.toString());
         String birthDate = "";
         try {
             weight = json.getDouble("Weight");
             gender = json.getString("Sex");
             birthDate = json.getString("BirthDate");
+            Log.d("Loaded BirthDate", birthDate);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("JSONException", "MapsActivity.populateUserData");
@@ -447,23 +444,15 @@ public class MapsActivity extends AppCompatActivity implements
         switch(menuItem.getItemId()) {
             case R.id.nav_training_id:
                 intent = new Intent(this, TrainingListActivity.class);
+                intent.putExtra("Username", userID);
                 startActivity(intent);
                 break;
             case R.id.nav_profile_id:
+                new FetchSessionTask().execute();
                 break;
             default:
                 break;
         }
-
-//        LayoutInflater inflater = getLayoutInflater();
-//        LinearLayout container = (LinearLayout) findViewById(R.id.content_frame);
-//        inflater.inflate(R.layout.activity_main, container);
-
-        // Highlight the selected item has been done by NavigationView
-        //menuItem.setChecked(true);
-        // Set action bar title
-        //setTitle(menuItem.getTitle());
-        // Close the navigation drawer
         mDrawer.closeDrawers();
     }
 
@@ -549,68 +538,20 @@ public class MapsActivity extends AppCompatActivity implements
             return;
         }
 
-        /*if (mLocationPermissionGranted) {
-            // Get the businesses and other points of interest located
-            // nearest to the device's current location.
-            @SuppressWarnings("MissingPermission")
-            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
-                    .getCurrentPlace(mGoogleApiClient, null);
-            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-                @Override
-                public void onResult(@NonNull PlaceLikelihoodBuffer likelyPlaces) {
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                        // Add a marker for each place near the device's current location, with an
-                        // info window showing place information.
-                        String attributions = (String) placeLikelihood.getPlace().getAttributions();
-                        String snippet = (String) placeLikelihood.getPlace().getAddress();
-                        if (attributions != null) {
-                            snippet = snippet + "\n" + attributions;
-                        }
-
-                        mMap.addMarker(new MarkerOptions()
-                                .position(placeLikelihood.getPlace().getLatLng())
-                                .title((String) placeLikelihood.getPlace().getName())
-                                .snippet(snippet));
-                    }
-                    // Release the place likelihood buffer.
-                    likelyPlaces.release();
-                }
-            });
-        } else {
-            mMap.addMarker(new MarkerOptions()
-                    .position(mDefaultLocation)
-                    .title(getString(R.string.default_info_title))
-                    .snippet(getString(R.string.default_info_snippet)));
-        }*/
-
-
-        mMap.addMarker(new MarkerOptions()
-                .position(mStartLocation)
-                .title("INICIO")
-                .snippet(mStartLocation.toString())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        mMap.addMarker(new MarkerOptions()
-                .position(mFinishLocation)
-                .title("FIN")
-                .snippet(mFinishLocation.toString())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-        LatLng latlng;
-        int i = 0;
-        for (Location location : route) {
-            latlng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (route.size() > 0) {
+            LatLng latlng = new LatLng(route.get(0).getLatitude(), route.get(0).getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(latlng)
-                    .title("Checkpoint " + Integer.toString(++i))
+                    .title("INICIO")
                     .snippet(latlng.toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
 
         if ( route.size() >= 2 )
         {
             PolylineOptions options = new PolylineOptions();
-            options.color( Color.parseColor( "#CC0000FF" ) );
-            options.width( 5 );
+            options.color( Color.parseColor( "#2196F3" ) );
+            options.width( 10 );
             options.visible( true );
             for ( Location location : route )
             {
@@ -667,19 +608,6 @@ public class MapsActivity extends AppCompatActivity implements
         }).start();
     }
 
-    // Inicia y detiene la sesion de entrenamiento
-/*    public void toggleSession(View view) {
-        if (isInSession) {
-            isInSession = false;
-            count = 0;
-            route.clear();
-            mMap.clear();
-            updateMarkers();
-        } else {
-            isInSession = true;
-        }
-    }*/
-
     private void startSession() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         startButton.setEnabled(false);
@@ -695,9 +623,12 @@ public class MapsActivity extends AppCompatActivity implements
         // Calling Weather API
         new FetchWeatherTask().execute();
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        chronometer.setVisibility(View.VISIBLE);
+        //chronometer.setVisibility(View.VISIBLE);
         startButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorDangerRed));
         startButton.setText(getResources().getString(R.string.maps_button_stop_string));
         startButton.setEnabled(true);
@@ -712,10 +643,15 @@ public class MapsActivity extends AppCompatActivity implements
         endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         //Log.d("time capture", "Finish Time: " + endTime);
 
-        minutesElapsed = (double)((SystemClock.elapsedRealtime() - chronometer.getBase()) / 60000);
+        distanceKM = (double)Math.round(distance / 100) / 10.0; // m -> km
+        timeElapsed = SystemClock.elapsedRealtime() - chronometer.getBase();
+        minutesElapsed = ((double)timeElapsed) / 60000;
         Log.d("Time", "Minutes Elapsed: " + Double.toString(minutesElapsed));
         chronometer.stop();
         chronometer.setVisibility(View.GONE);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().show();
+        }
         //sessionJSON = getSessionJSON();
 
         //Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
@@ -740,6 +676,9 @@ public class MapsActivity extends AppCompatActivity implements
             if (addresses.size() > 0) {
                 city = addresses.get(0).getLocality();
                 country = addresses.get(0).getCountryName();
+                if (country.equals("Dominican Republic")) {
+                    country = "República Dominicana";
+                }
                 Log.d("address capture", "City: " + city + ", Country: " + country);
             }
         }
@@ -757,12 +696,12 @@ public class MapsActivity extends AppCompatActivity implements
             jsonObj.put("ClimateConditionID", climateCondition);
             jsonObj.put("AverageBPM", averageBPM);
             jsonObj.put("RouteID", routeID);
-            jsonObj.put("Coordinates", coordinates); //pin
-            jsonObj.put("CityName", city); //pin
-            jsonObj.put("CountryName", "República Dominicana"); //pin TODO non-static value
+            jsonObj.put("Coordinates", coordinates);
+            jsonObj.put("CityName", city);
+            jsonObj.put("CountryName", country);
             jsonObj.put("StartTime", startTime);
             jsonObj.put("EndTime", endTime);
-            jsonObj.put("Distance", distance);
+            jsonObj.put("Distance", distanceKM);
             jsonObj.put("BurntCalories", burntCalories);
             jsonObj.put("RelativeHumidity", relativeHumidity);
             jsonObj.put("Temperature", temperature);
@@ -803,7 +742,7 @@ public class MapsActivity extends AppCompatActivity implements
                         trainingType = items[i];
                         dialogInterface.dismiss();
                         Log.d("Dialog Select", "TRAINING TYPE: " + trainingType);
-                        toastMessage("Selected: " + trainingType);
+                        toastMessage("Seleccionó: " + trainingType);
 
                         startSession();
                     }
@@ -817,12 +756,23 @@ public class MapsActivity extends AppCompatActivity implements
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this,
-                    "Results Post FAILED " + Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM()),
+                    "No se pudo conectar con servicio.", //+ Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM()),
                     Toast.LENGTH_LONG)
                     .show();
-
         }
         dbHelper.insertSession(getSessionJSON());
+
+        Intent intent = new Intent(this, ResultsActivity.class);
+
+        intent.putExtra("TrainingTypeID", trainingType);
+        intent.putExtra("Distance", distanceKM);
+        intent.putExtra("TimeElapsed", timeElapsed);
+        intent.putExtra("AverageBPM", averageBPM);
+        intent.putExtra("BurntCalories", burntCalories);
+        intent.putExtra("ClimateConditionID", climateCondition);
+        intent.putExtra("Temperature", temperature);
+
+        startActivity(intent);
     }
 
     public boolean getBPM() {
@@ -838,15 +788,21 @@ public class MapsActivity extends AppCompatActivity implements
         double athleteFactor = 0;
         double durationFactor = 0;
 
+//        if (gender.equals("Masculino")) {
+//            athleteFactor = ((double)age * 0.2017) - (weight * 0.09036) + (averageBPM * 0.6309) - 55.0969;
+//        } else if (gender.equals("Femenino")) {
+//            athleteFactor = ((double)age * 0.074) - (weight * 0.05741) + (averageBPM * 0.4472) - 20.4022;
+//        }
+
         if (gender.equals("Masculino")) {
-            athleteFactor = ((double)age * 0.2017) - (weight * 0.09036) + (averageBPM * 0.6309) - 55.0969;
+            athleteFactor = ((double)age * 0.2017) + (weight * 0.453592 * 0.1988) + (averageBPM * 0.6309) - 55.0969;
         } else if (gender.equals("Femenino")) {
-            athleteFactor = ((double)age * 0.074) - (weight * 0.05741) + (averageBPM * 0.4472) - 20.4022;
+            athleteFactor = ((double)age * 0.074) + (weight * 0.453592 * 0.1263) + (averageBPM * 0.4472) - 20.4022;
         }
 
         durationFactor = minutesElapsed / 4.184;
 
-        return (athleteFactor * durationFactor);
+        return (double)Math.round(athleteFactor * durationFactor * 10) / 10.0;
     }
 
     public void toastMessage(String msg) {
@@ -941,8 +897,6 @@ public class MapsActivity extends AppCompatActivity implements
 
     class PostResultsTask extends AsyncTask<Void, Void, String> {
 
-        private Exception exception;
-
         protected void onPreExecute() {
 
         }
@@ -950,19 +904,12 @@ public class MapsActivity extends AppCompatActivity implements
         protected String doInBackground(Void... urls) {
 
             try {
-//                final String API_URL = "http://26e76265.ngrok.io/session";
-                final String API_URL = "http://26e76265.ngrok.io/api/speedforce/training/log";
+                final String API_URL = "http://speedforceservice.azurewebsites.net/api/training/logsession";
                 URL url = new URL(API_URL);
 
                 boolean successBPM = false;
                 Date stamp = new Date();
                 while((new Date()).getTime() - stamp.getTime() <= 10000) {
-//                    if(((SpeedforceApplication) getApplication()).isChanged()
-//                            && !((SpeedforceApplication) getApplication()).isExpired(new Date())) {
-//                        averageBPM = ((SpeedforceApplication) getApplication()).getAverageBPM();
-//
-//                        break;
-//                    }
                     if(getBPM()) {
                         successBPM = true;
                         burntCalories = getCalories();
@@ -1016,15 +963,26 @@ public class MapsActivity extends AppCompatActivity implements
             Log.i("INFO", response);
 
             boolean posted = false;
-            String msg = "NO MESSAGE...";
+            String msg = "No Hubo Mensaje...";
+            String sess = null;
 
             try {
                 JSONObject responseJSON = new JSONObject(response);
-                posted = responseJSON.getBoolean("success");
-                msg = responseJSON.getString("message");
+                //posted = responseJSON.getBoolean("success");
+                sess = responseJSON.getString("SessionID");
+                //msg = responseJSON.getString("message");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            if (sess != null && sess.equals(sessionID)) {
+                posted = true;
+                msg = "Sesión Enviada Exitosamente";
+            } else {
+                posted = false;
+                msg = "No se pudo enviar la sesión";
+            }
+
             goToResults(posted, msg);
         }
     }
@@ -1057,6 +1015,75 @@ public class MapsActivity extends AppCompatActivity implements
             }
             return value;
         }
+    }
+
+
+
+
+
+
+
+    class FetchSessionTask extends AsyncTask<Void, Void, String> {
+
+        protected void onPreExecute() {
+        }
+
+        protected String doInBackground(Void... urls) {
+
+            try {
+                final String API_URL = "http://speedforceservice.azurewebsites.net/api/training/challenge/" + userID;
+                URL url = new URL(API_URL);
+                Log.d("URL", "Fetch Session URL: " + url.toString()); //Check built URL
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
+            }
+            catch(Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            boolean success = true;
+            String msg = "Sesión Habilitada";
+            if(response == null) {
+                success = false;
+                response = "THERE WAS AN ERROR";
+                msg = "No Hubo Respuesta";
+            }
+            Log.d("JSON", "Fetch Session RESPONSE: " + response);
+
+            if (success) {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    dbHelper.insertSession(json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("FetchSessionTaskERROR", "OnPostExecute.");
+                    msg = "Sesión Corrupta";
+                    toastMessage(msg);
+                }
+                toastMessage(msg);
+            } else {
+                toastMessage(msg);
+            }
+
+
+        }
+
     }
 
 }

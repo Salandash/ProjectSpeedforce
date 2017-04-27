@@ -38,7 +38,7 @@
     <string name="register_textview_name_string">Nombre</string>
     <string name="register_textview_lastname_string">Apellido</string>
     <string name="register_textview_birthdate_string">Fecha de Nacimiento</string>
-    <string name="register_textview_weight_string">Peso (kg)</string>
+    <string name="register_textview_weight_string">Peso (lb)</string>
     <string name="register_textview_height_string">Altura (m)</string>
     <string name="register_textview_telephone_string">Número de Teléfono</string>
     <string name="register_textview_country_string">País</string>
@@ -50,9 +50,14 @@
     <string name="register_textview_bike_string">Bicicleta</string>
     <string name="register_textview_title_string">Crear Cuenta</string>
     <string-array name="register_spinner_country_stringarray">
-        <item>Dominican Republic</item>
-        <item>Mexico</item>
-        <item>Panama</item>
+        <item>República Dominicana</item>
+        <item>México</item>
+        <item>Ecuador</item>
+    </string-array>
+    <string-array name="register_spinner_bikertype_stringarray">
+        <item>Sprinter</item>
+        <item>Maratonista</item>
+        <item>Mountain Biker</item>
     </string-array>
 
     <!-- Google Maps Activities Strings -->
@@ -70,6 +75,18 @@
     <!-- Navigation Drawer Strings -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- Results Activity Strings -->
+    <string name="results_textview_title_string">Resultados</string>
+    <string name="results_textview_trainingtype_string">Tipo de Entrenamiento:</string>
+    <string name="results_textview_distance_string">Distancia Recorrida:</string>
+    <string name="results_textview_duration_string">Duración:</string>
+    <string name="results_textview_averagebpm_string">Latidos Por Minuto:</string>
+    <string name="results_textview_burntcalories_string">Calorías Quemadas:</string>
+    <string name="results_textview_climatecondition_string">Condición Climática:</string>
+    <string name="results_textview_temperature_string">Temperatura:</string>
+    <string name="results_button_accept_string">ACEPTAR</string>
+    <string name="results_textview_unavailable_string">N/A</string>
 
     <!-- Other Strings -->
     <string name="title_activity_received_maps">Sesión de Entrenamiento</string>

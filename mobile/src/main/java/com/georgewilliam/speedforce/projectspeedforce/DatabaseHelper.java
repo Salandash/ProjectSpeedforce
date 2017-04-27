@@ -192,6 +192,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return json;
     }
 
+    public boolean userExists(String username) {
+
+        Cursor cursor = this.getReadableDatabase()
+                .rawQuery("SELECT * FROM " + USER_TABLE + " WHERE " + USER_USERNAME + "='" + username + "';", null);
+
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+
+        cursor.close();
+        return true;
+    }
+
 
     public JSONObject getSession(String sessionID) {
 

@@ -88,18 +88,18 @@ public class FrontFragment extends Fragment implements OnClickListener {
         try {
 
             location = new JSONObject();
-            location.put("lat", 18.4579648);
-            location.put("lng", -69.9612128);
+            location.put("lat", 18.4514340);
+            location.put("lng", -69.9444650);
             array.put(location);
 
             location = new JSONObject();
-            location.put("lat", 18.4579325);
-            location.put("lng", -69.9612684);
+            location.put("lat", 18.4524980);
+            location.put("lng", -69.9422170);
             array.put(location);
 
             location = new JSONObject();
-            location.put("lat", 18.4578000);
-            location.put("lng", -69.9614000);
+            location.put("lat", 18.4509970);
+            location.put("lng", -69.9411820);
             array.put(location);
 
             json.put("Username", "jojikun");
@@ -137,10 +137,14 @@ public class FrontFragment extends Fragment implements OnClickListener {
             Log.e("ExceptionJSON", "TEST INSERT FAILED.");
         }
 
-        dbHelper.insertUser(json);
+        //dbHelper.insertUser(json);
         dbHelper.insertSession(json);
 
-        Toast.makeText(this.getActivity(),"TEST INSERT SUCCESS?", Toast.LENGTH_SHORT).show();
+        try {
+            Toast.makeText(this.getActivity(),json.getJSONArray("Coordinates").toString(), Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         Log.i("insertSampleData", "TEST INSERT SUCCESS?");
     }
 

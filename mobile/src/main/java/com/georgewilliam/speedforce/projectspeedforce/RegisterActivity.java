@@ -34,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextTelephone;
 //    private EditText editTextCountry;
     private EditText editTextCity;
-    private EditText editTextBikerType;
+    //private EditText editTextBikerType;
     //private EditText editTextBike;
 
     // Sign In
@@ -42,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
     private RadioButton radioButtonM;
     private RadioButton radioButtonF;
     private Spinner spinnerCountry;
+    private Spinner spinnerBikerType;
 
     private String email;
 //    private String username;
@@ -88,13 +89,14 @@ public class RegisterActivity extends AppCompatActivity {
         editTextTelephone = (EditText) findViewById(R.id.register_edittext_telephone_id);
 //        editTextCountry = (EditText) findViewById(R.id.register_edittext_country_id);
         editTextCity = (EditText) findViewById(R.id.register_edittext_city_id);
-        editTextBikerType = (EditText) findViewById(R.id.register_edittext_bikertype_id);
+        //editTextBikerType = (EditText) findViewById(R.id.register_edittext_bikertype_id);
         //editTextBike = (EditText) findViewById(R.id.register_edittext_bike_id);
 
         buttonNext = (Button) findViewById(R.id.register_button_next_id);
         radioButtonM = (RadioButton) findViewById(R.id.register_radiobutton_masculine_id);
         radioButtonF = (RadioButton) findViewById(R.id.register_radiobutton_femenine_id);
         spinnerCountry = (Spinner) findViewById(R.id.register_spinner_country_id);
+        spinnerBikerType = (Spinner) findViewById(R.id.register_spinner_bikertype_id);
 
         // DatePicker Init
         myCalendar = Calendar.getInstance();
@@ -102,7 +104,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -118,7 +119,6 @@ public class RegisterActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editTextBirthDate.getWindowToken(), 0);
 
-                // TODO Auto-generated method stub
                 new DatePickerDialog(RegisterActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -148,7 +148,8 @@ public class RegisterActivity extends AppCompatActivity {
 //                country = String.valueOf(editTextCountry.getText());
                 country = spinnerCountry.getSelectedItem().toString();
                 city = String.valueOf(editTextCity.getText());
-                bikerType = String.valueOf(editTextBikerType.getText());
+                //bikerType = String.valueOf(editTextBikerType.getText());
+                bikerType = spinnerBikerType.getSelectedItem().toString();
                 //bike = String.valueOf(editTextBike.getText());
 
 
@@ -248,13 +249,13 @@ public class RegisterActivity extends AppCompatActivity {
         intent.putExtra("LastName", lastName);
         intent.putExtra("BirthDate", birthDate);
         intent.putExtra("Sex", gender);
-        intent.putExtra("TelephoneNumber", telephone); //TODO must be masked at input (only -)
+        intent.putExtra("TelephoneNumber", telephone);
         intent.putExtra("CountryName", country);
         intent.putExtra("CityName", city);
-        intent.putExtra("Height", height);
-        intent.putExtra("Weight", weight);
+        intent.putExtra("Height", heightDouble);
+        intent.putExtra("Weight", weightDouble);
         intent.putExtra("BikerType", bikerType);
-        //intent.putExtra("Bike", bike); //TODO Eliminate from model
+        //intent.putExtra("Bike", bike);
         startActivity(intent);
         // when MapsActivity closes
         finish();

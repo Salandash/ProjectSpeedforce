@@ -7,7 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.renderscript.Double2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.view.WatchViewStub;
@@ -37,9 +36,11 @@ public class MainActivity extends Activity implements
 
     private static final String WEAR_MESSAGE_PATH = "/bpm_data";
     //private static final int TYPE_PASSIVE_WELLNESS = 65538;
+    private static final int SEND_INTERVAL = 3;
+    private int count = 0;
 
-    private TextView mTextView;
-    private Button mButton;
+    private TextView mTextViewBPM;
+    //private Button mButton;
     private Chronometer mChronometer;
 
     private boolean operating = false;
@@ -65,9 +66,9 @@ public class MainActivity extends Activity implements
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.wText);
-                mChronometer = (Chronometer) findViewById(R.id.wTimer);
-                mButton = (Button) stub.findViewById(R.id.wButton);
+                mTextViewBPM = (TextView) stub.findViewById(R.id.wear_textview_bpm_id);
+                mChronometer = (Chronometer) findViewById(R.id.wear_chronometer_timer_id);
+                //mButton = (Button) stub.findViewById(R.id.wear_button_start_id);
 
                 mChronometer.setText("00:00:00");
 
@@ -84,19 +85,19 @@ public class MainActivity extends Activity implements
                     }
                 });
 
-                mButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d("WEAR", "OnClick");
-                        if (!operating) {
-                            //START
-                            startSession();
-                        } else {
-                            //STOP
-                            endSession();
-                        }
-                    }
-                });
+//                mButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Log.d("WEAR", "OnClick");
+//                        if (!operating) {
+//                            //START
+//                            startSession();
+//                        } else {
+//                            //STOP
+//                            endSession();
+//                        }
+//                    }
+//                });
 
                 Log.d("ACTIVITY", "End of OnLayoutInflatedListener/OnCreate");
             }
@@ -119,7 +120,7 @@ public class MainActivity extends Activity implements
             startSessionAfterResume();
         } else {
             endSession();
-            Toast.makeText(this, Double.toString(averageBPM), Toast.LENGTH_SHORT).show();//TODO
+            //Toast.makeText(this, Double.toString(averageBPM), Toast.LENGTH_SHORT).show();
             sendMessage(WEAR_MESSAGE_PATH, Double.toString(Math.round(averageBPM * 100.0) / 100.0));
             finish();
         }
@@ -157,19 +158,19 @@ public class MainActivity extends Activity implements
         averageBPM = 0;
         bpmCounter = 0;
         operating = true;
-        mButton.setText("Stop");
+        //mButton.setText("Stop");
         mChronometer.setBase(SystemClock.elapsedRealtime());
         activateSensor();
         mChronometer.start();
-        mTextView.setText("bpm: Loading...");
+        mTextViewBPM.setText("LPM: Loading...");
     }
 
     private void endSession() {
         operating = false;
-        mButton.setText("Start");
+        //mButton.setText("Start");
         deactivateSensor();
         mChronometer.stop();
-        mTextView.setText("bpm: OFF");
+        mTextViewBPM.setText("LPM: OFF");
     }
 
     private void activateSensor() {
@@ -219,7 +220,7 @@ public class MainActivity extends Activity implements
             @Override
             public void run() {
                 if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
-                    mTextView.setText(new String( messageEvent.getData() ));
+                    mTextViewBPM.setText(new String( messageEvent.getData() ));
                 }
             }
         });
@@ -235,9 +236,16 @@ public class MainActivity extends Activity implements
                 //mCircledImageView.setCircleColor(getResources().getColor(R.color.green));
                 ++bpmCounter;
                 averageBPM += (sensorEvent.values[0] - averageBPM) / bpmCounter;
-                bpm = "bpm: " + (int) sensorEvent.values[0];
-                mTextView.setText(bpm);
-                Log.d("BPM", bpm);
+                bpm = "LPM: " + (int) sensorEvent.values[0];
+                mTextViewBPM.setText(bpm);
+                Log.d("bpm", bpm);
+
+                if (count == 0) {
+                    count = SEND_INTERVAL;
+                    sendMessage(WEAR_MESSAGE_PATH, Double.toString(Math.round(averageBPM * 100.0) / 100.0));
+                } else {
+                    count--;
+                }
             }
         }
     }
@@ -283,7 +291,7 @@ public class MainActivity extends Activity implements
             @Override
             public void run() {
                 while (!operating) {
-                    if (mButton != null)
+                    if (mChronometer != null)
                         startSession();
                 }
             }

@@ -20,13 +20,16 @@ import java.util.UUID;
 public class TrainingListActivity extends AppCompatActivity {
 
     private ListView mList;
-
     private DatabaseHelper dbHelper;
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_list);
+
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getString("Username");
 
         dbHelper = new DatabaseHelper(this, null, null, 1);
 
@@ -71,7 +74,7 @@ public class TrainingListActivity extends AppCompatActivity {
                 // TextView en el layout del item
                 TextView textView = (TextView) view;
                 String message = "Item:" + textView.getText().toString() + " id:" + Long.toString(id);
-                toast(message);
+                //toast(message);
 
                 startSessionActivity(textView.getText().toString());
             }
@@ -82,11 +85,9 @@ public class TrainingListActivity extends AppCompatActivity {
         // Temporal
         Intent intent = new Intent(this, ReceivedMapsActivity.class);
         intent.putExtra("SessionID", sessionID);
-        intent.putExtra("UserID", "jojikun");
-        intent.putExtra("RouteID", UUID.randomUUID().toString());
-        intent.putExtra("TrainingType", "Distancia");
-        intent.putExtra("SessionStatus", "Pendiente");
+        intent.putExtra("UserID", userID);
         startActivity(intent);
+        finish();
     }
 
     private void toast(String message) {

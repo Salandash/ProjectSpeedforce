@@ -1,15 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorPrimary"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.MainActivity"
     tools:deviceIds="wear_square">
 
-    <TextView
-        android:id="@+id/text"
+    <ImageView
+        android:id="@+id/wear_imageview_logo"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/img_logo_blue_filled"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Chronometer
+        android:id="@+id/wear_chronometer_timer_id"
+        android:textColor="@color/white"
+        android:textSize="50sp"
+        android:text="00:00:00"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_square" />
-</LinearLayout>
+        android:layout_below="@+id/wear_imageview_logo"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/wear_imageview_heart"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/img_heart_white"
+        android:layout_below="@+id/wear_chronometer_timer_id"
+        android:layout_toStartOf="@+id/wear_chronometer_timer_id" />
+
+    <TextView
+        android:id="@+id/wear_textview_bpm_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LPM: OFF"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/wear_chronometer_timer_id"
+        android:layout_toEndOf="@+id/wear_imageview_heart" />
+
+    <!--    <Button
+            android:id="@+id/wear_button_start_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:visibility="invisible"
+            android:textColor="@color/white"
+            android:background="@color/colorPrimaryDark"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"/>-->
+
+</RelativeLayout>

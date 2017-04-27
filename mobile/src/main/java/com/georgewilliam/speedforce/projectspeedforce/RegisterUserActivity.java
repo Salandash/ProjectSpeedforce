@@ -132,7 +132,6 @@ public class RegisterUserActivity extends AppCompatActivity {
         json.put("Height", height);
         json.put("Weight", weight);
         json.put("BikerType", bikerType);
-        //json.put("Bike", bike); TODO eliminate from model
         return json;
     }
 
@@ -147,12 +146,13 @@ public class RegisterUserActivity extends AppCompatActivity {
         protected String doInBackground(Void... urls) {
 
             try {
-                final String API_URL = "http://26e76265.ngrok.io/register";
+                final String API_URL = "http://speedforceservice.azurewebsites.net/api/users/registerA";
                 //final String API_URL = "http://26e76265.ngrok.io/api/speedforce/users/registerA";
                 URL url = new URL(API_URL);
 
                 JSONObject json = getUserJSON();
                 String requestBody = json.toString();
+                Log.d("Login Register Json", requestBody);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
@@ -191,22 +191,34 @@ public class RegisterUserActivity extends AppCompatActivity {
             }
             Log.i("INFO", response);
 
-            boolean created = false;
+            //boolean created = false;
+            String user = null;
             String msg = "NO MESSAGE...";
 
             try {
                 JSONObject responseJSON = new JSONObject(response);
-                created = responseJSON.getBoolean("success");
-                msg = responseJSON.getString("message");
+                //created = responseJSON.getBoolean("success");
+                user = responseJSON.getString("Username");
+                //msg = responseJSON.getString("message");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            toastMessage(msg);
+            //toastMessage(msg);
 
-            if (created) {
+//            if (created) {
+//                login(msg);
+//            }
+
+            if (user != null && user.equals(username)) {
+                msg = "Registro Exitoso";
+                toastMessage(msg);
                 login(msg);
+            } else {
+                msg = "Registro Fallido";
+                toastMessage(msg);
             }
+
         }
     }
 }

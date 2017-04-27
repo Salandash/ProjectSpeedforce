@@ -5,71 +5,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/img_background_wear"
     tools:context="com.georgewilliam.speedforce.projectspeedforce.MainActivity"
     tools:deviceIds="wear_round">
 
-    <TextView
-        android:id="@+id/wText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="bpm: OFF"
-        android:textColor="@color/white"
-        android:layout_below="@+id/wImageView_heart"
-        android:layout_alignStart="@+id/wImageView_heart" />
-
-    <TextView
-        android:id="@+id/wTextKM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0 KM"
-        android:textColor="@color/white"
-        android:layout_below="@+id/wImageView_volt"
-        android:layout_alignEnd="@+id/wImageView_volt" />
-
-    <Button
-        android:id="@+id/wButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:textColor="@color/white"
-        android:background="@color/colorPrimaryDark"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
-
-    <Chronometer
-        android:id="@+id/wTimer"
-        android:textColor="@color/white"
-        android:background="@color/colorPrimary"
-        android:textSize="20sp"
-        android:text="00:00:00"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/wText"
-        android:layout_centerHorizontal="true" />
-
     <ImageView
-        android:id="@+id/wImageView_logo"
+        android:id="@+id/wear_imageview_logo"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:src="@drawable/img_logo_white"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/img_logo_blue_filled"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <ImageView
-        android:id="@+id/wImageView_heart"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/img_heart_white"
-        android:layout_below="@+id/wImageView_logo"
-        android:layout_toStartOf="@+id/wImageView_logo" />
+    <Chronometer
+        android:id="@+id/wear_chronometer_timer_id"
+        android:textColor="@color/white"
+        android:textSize="50sp"
+        android:text="00:00:00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/wear_imageview_logo"
+        android:layout_centerHorizontal="true" />
 
-    <ImageView
-        android:id="@+id/wImageView_volt"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/img_lightning_white"
-        android:layout_below="@+id/wImageView_logo"
-        android:layout_toEndOf="@+id/wImageView_logo" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/wear_chronometer_timer_id">
+
+        <ImageView
+            android:id="@+id/wear_imageview_heart"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/img_heart_white" />
+
+        <TextView
+            android:id="@+id/wear_textview_bpm_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LPM: OFF"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+
+
+<!--    <Button
+        android:id="@+id/wear_button_start_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimaryDark"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>-->
 
 </RelativeLayout>
