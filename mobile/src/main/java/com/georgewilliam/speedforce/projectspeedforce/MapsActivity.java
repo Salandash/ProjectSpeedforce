@@ -25,16 +25,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationRequest;
@@ -65,6 +68,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+//import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -120,6 +124,7 @@ public class MapsActivity extends AppCompatActivity implements
 
     // The geographical location where the device is currently located.
     private Location mCurrentLocation;
+    private Location mPrevMilestone;
 
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -130,24 +135,27 @@ public class MapsActivity extends AppCompatActivity implements
     private int count = 0;
     private boolean isInSession = false;
     private ArrayList<Location> route = new ArrayList<Location>();
+    private ArrayList<Boolean> milestones = new ArrayList<Boolean>();
     private Chronometer chronometer;
     private Button startButton;
-    private JSONObject sessionJSON;
+    private Button yesButton;
+    private Button noButton;
+    private TextView intendedRouteQuestionTextView;
 
     // for API calls
-    private TextView responseView;
     private ProgressBar progressBar;
 
     // to convert to session json
+    private JSONObject sessionJSON;
     private String sessionID; //uuid
     private String userID = "PlaceHolderUser";
     private String climateCondition = "Desconocido";
     private double averageBPM = -1;
     private String routeID; //uuid
+    private String routeName = "";
     private JSONArray coordinates;
     private String city = "Desconocido";
     private String country = "Desconocido";
-    //coordenadas
     private String startTime;
     private String endTime;
     private double distance;
@@ -199,7 +207,15 @@ public class MapsActivity extends AppCompatActivity implements
 
         chronometer = (Chronometer) findViewById(R.id.chronometer_id);
         chronometer.setVisibility(View.GONE);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar_id);
+        progressBar.setVisibility(View.GONE);
         startButton = (Button) findViewById(R.id.start_button_id);
+        yesButton = (Button) findViewById(R.id.yes_button_id);
+        yesButton.setVisibility(View.GONE);
+        noButton = (Button) findViewById(R.id.no_button_id);
+        noButton.setVisibility(View.GONE);
+        intendedRouteQuestionTextView = (TextView) findViewById(R.id.intended_route_question_textview_id);
+        intendedRouteQuestionTextView.setVisibility(View.GONE);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,13 +223,25 @@ public class MapsActivity extends AppCompatActivity implements
                 if (isInSession) {
                     endSession();
                 } else {
-                    displayTrainingTypeSelectDialog();
+                    displayTrainingTypeSelectDialog(); // also starts the session
                     //startSession();
                 }
             }
         });
 
+        yesButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                yesClick();
+            }
+        });
 
+        noButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                noClick();
+            }
+        });
     }
 
     private void populateUserData() {
@@ -320,6 +348,12 @@ public class MapsActivity extends AppCompatActivity implements
         if (isInSession) {
             if (count <= 0) {
                 count = CAPTURE_INTERVAL;
+                if(milestones.isEmpty() || (mPrevMilestone.distanceTo(location) >= SessionUtility.MIN_MILESTONE_DISTANCE)) {
+                    milestones.add(true);
+                    mPrevMilestone = location;
+                } else {
+                    milestones.add(false);
+                }
                 route.add(location);
                 Log.d("location capture", Double.toString(location.getLatitude()) +
                         ", " + Double.toString(location.getLongitude()));
@@ -328,6 +362,7 @@ public class MapsActivity extends AppCompatActivity implements
             Log.d("location capture", "COUNT: " + Integer.toString(count));
             distance += mCurrentLocation.distanceTo(location);
         }
+
         mCurrentLocation = location;
         updateMarkers();
     }
@@ -561,6 +596,22 @@ public class MapsActivity extends AppCompatActivity implements
             mMap.addPolyline( options );
         }
 
+        // asking intended route
+        if (providedRouteIndex >= 0 && providedRouteIndex < providedRouteList.size()) {
+            if (providedRouteList.get(providedRouteIndex).size() >= 2) {
+                PolylineOptions options = new PolylineOptions();
+                options.color( Color.parseColor( "#CCDDBB00" ) );
+                options.width( 15 );
+                options.visible( true );
+                for ( Location location : providedRouteList.get(providedRouteIndex) )
+                {
+                    options.add( new LatLng( location.getLatitude(),
+                            location.getLongitude() ) );
+                }
+                mMap.addPolyline( options );
+            }
+        }
+
     }
 
     /**
@@ -652,16 +703,20 @@ public class MapsActivity extends AppCompatActivity implements
         if (getSupportActionBar() != null) {
             getSupportActionBar().show();
         }
+
         //sessionJSON = getSessionJSON();
-
         //Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
-        new PostResultsTask().execute();
 
-        count = 0;
+        new PostRouteParamsTask().execute();
+        //new PostResultsTask().execute();
         coordinates = getCoordinatesJSON();
-        route.clear();
-        mMap.clear();
-        updateMarkers();
+        setAverageBPM(); // also sets calories
+        count = 0;
+
+//        route.clear();
+//        milestones.clear();
+//        mMap.clear();
+//        updateMarkers();
         startButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorSuccessBlue));
         startButton.setText(getResources().getString(R.string.maps_button_start_string));
         startButton.setEnabled(true);
@@ -696,6 +751,7 @@ public class MapsActivity extends AppCompatActivity implements
             jsonObj.put("ClimateConditionID", climateCondition);
             jsonObj.put("AverageBPM", averageBPM);
             jsonObj.put("RouteID", routeID);
+            jsonObj.put("RouteName", routeName);
             jsonObj.put("Coordinates", coordinates);
             jsonObj.put("CityName", city);
             jsonObj.put("CountryName", country);
@@ -716,18 +772,42 @@ public class MapsActivity extends AppCompatActivity implements
 
     private JSONArray getCoordinatesJSON()  {
         JSONArray jsonLocationArray = new JSONArray();
+        int index = 0;
         for (Location location : route) {
             JSONObject jsonLocation = new JSONObject();
             try {
                 jsonLocation.put("lat", location.getLatitude());
                 jsonLocation.put("lng", location.getLongitude());
+                jsonLocation.put("isMilestone", milestones.get(index));
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("JSONException", "MapsActivity.getCoordinatesJSON");
             }
             jsonLocationArray.put(jsonLocation);
+            index++;
         }
         return jsonLocationArray;
+    }
+
+    private JSONObject getParamsJSON() {
+        JSONObject jsonParams = new JSONObject();
+        try {
+            JSONObject jsonLocation = new JSONObject();
+            jsonLocation.put("lat", route.get(0).getLatitude());
+            jsonLocation.put("lng", route.get(0).getLongitude());
+            jsonLocation.put("isMilestone", milestones.get(0));
+            jsonParams.put("StartPoint", jsonLocation);
+            jsonLocation = new JSONObject();
+            jsonLocation.put("lat", route.get(route.size() - 1).getLatitude());
+            jsonLocation.put("lng", route.get(route.size() - 1).getLongitude());
+            jsonLocation.put("isMilestone", milestones.get(milestones.size() - 1));
+            jsonParams.put("EndPoint", jsonLocation);
+            jsonParams.put("Distance", distanceKM);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSONException", "MapsActivity.getParamsJSON");
+        }
+        return jsonParams;
     }
 
     private void displayTrainingTypeSelectDialog() {
@@ -748,6 +828,34 @@ public class MapsActivity extends AppCompatActivity implements
                     }
                 });
         dialog.show();
+    }
+
+    private void setRouteName() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.maps_dialog_routename_title_string);
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        // input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton(R.string.maps_button_accept_string, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                routeName = input.getText().toString();
+                sessionJSON = getSessionJSON();
+                endPostPrep();
+            }
+        });
+//        builder.setNegativeButton(R.string.maps_button_cancel_string, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+        builder.show();
     }
 
     private void goToResults(boolean success, String msg) {
@@ -775,6 +883,33 @@ public class MapsActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
+    public void setAverageBPM() {
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                boolean successBPM = false;
+                Date stamp = new Date();
+                while((new Date()).getTime() - stamp.getTime() <= 10000) {
+                    if(getBPM()) {
+                        successBPM = true;
+                        burntCalories = getCalories();
+                        break;
+                    }
+                }
+                if(!successBPM) {
+                    averageBPM = 0;
+                }
+
+                runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        //extra action
+                    }
+                });
+            }
+        }).start();
+    }
+
     public boolean getBPM() {
         if(((SpeedforceApplication) getApplication()).isChanged()
                 && !((SpeedforceApplication) this.getApplication()).isExpired(new Date())) {
@@ -787,12 +922,6 @@ public class MapsActivity extends AppCompatActivity implements
     public double getCalories() {
         double athleteFactor = 0;
         double durationFactor = 0;
-
-//        if (gender.equals("Masculino")) {
-//            athleteFactor = ((double)age * 0.2017) - (weight * 0.09036) + (averageBPM * 0.6309) - 55.0969;
-//        } else if (gender.equals("Femenino")) {
-//            athleteFactor = ((double)age * 0.074) - (weight * 0.05741) + (averageBPM * 0.4472) - 20.4022;
-//        }
 
         if (gender.equals("Masculino")) {
             athleteFactor = ((double)age * 0.2017) + (weight * 0.453592 * 0.1988) + (averageBPM * 0.6309) - 55.0969;
@@ -898,7 +1027,7 @@ public class MapsActivity extends AppCompatActivity implements
     class PostResultsTask extends AsyncTask<Void, Void, String> {
 
         protected void onPreExecute() {
-
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         protected String doInBackground(Void... urls) {
@@ -907,21 +1036,9 @@ public class MapsActivity extends AppCompatActivity implements
                 final String API_URL = "http://speedforceservice.azurewebsites.net/api/training/logsession";
                 URL url = new URL(API_URL);
 
-                boolean successBPM = false;
-                Date stamp = new Date();
-                while((new Date()).getTime() - stamp.getTime() <= 10000) {
-                    if(getBPM()) {
-                        successBPM = true;
-                        burntCalories = getCalories();
-                        break;
-                    }
-                }
+                //setAverageBPM();
 
-                if(!successBPM) {
-                    averageBPM = 0;
-                }
-
-                sessionJSON = getSessionJSON();
+                //sessionJSON = getSessionJSON();
                 Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
                 String requestBody = sessionJSON.toString();
 
@@ -957,6 +1074,17 @@ public class MapsActivity extends AppCompatActivity implements
         }
 
         protected void onPostExecute(String response) {
+            progressBar.setVisibility(View.GONE);
+            route.clear();
+            milestones.clear();
+            providedRouteList.clear();
+            providedRouteIndex = -1;
+            indexedRouteIdList.clear();
+            indexedRouteNameList.clear();
+            providedRouteArrayIndexes.clear();
+            mMap.clear();
+            updateMarkers();
+
             if(response == null) {
                 response = "THERE WAS AN ERROR";
             }
@@ -1019,6 +1147,191 @@ public class MapsActivity extends AppCompatActivity implements
 
 
 
+    class PostRouteParamsTask extends AsyncTask<Void, Void, String> {
+
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        protected String doInBackground(Void... urls) {
+
+            try {
+                final String API_URL = "http://speedforceservice.azurewebsites.net/api/training/routes";
+                URL url = new URL(API_URL);
+
+                JSONObject paramsJSON = getParamsJSON();
+                Log.d("JSON", "Params Request in JSON: " + paramsJSON.toString());
+                String requestBody = paramsJSON.toString();
+
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    //for output
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "utf-8"));
+                    bufferedWriter.write(requestBody);
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+
+                    //for input
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
+            }
+            catch(Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            progressBar.setVisibility(View.GONE);
+            if (response == null) {
+                response = "ERROR: null response. Replacing for empty brackets.";
+                Log.d("JSON", "ROUTE ARRAY RESPONSE: " + response);
+                response = "[]";
+            } else {
+                Log.d("JSON", "ROUTE ARRAY RESPONSE: " + response);
+            }
+
+            try {
+                progressBar.setVisibility(View.VISIBLE);
+                providedRouteJsonArray = new JSONArray(response);
+                //HAUSDORFF APPROVED - Up to 3
+                //loop through session array
+                providedRouteArrayIndexes = new ArrayList<>();
+                for (int i = 0; i < providedRouteJsonArray.length(); i++) {
+                    JSONObject routeInstance = providedRouteJsonArray.getJSONObject(i);
+                    String routeInstanceId = routeInstance.getString("RouteID");
+                    String routeInstanceName = routeInstance.getString("RouteName");
+                    JSONArray coordinatesArray = routeInstance.getJSONArray("Coordinates");
+                    if (SessionUtility.isHausdorffValid(getCoordinatesJSON(), coordinatesArray)) {
+                        // Creating Location List to add route
+
+                        JSONObject coordinatesObj;
+                        Location location;
+                        ArrayList<Location> locationList = new ArrayList<>();
+                        for (int x = 0; x < coordinatesArray.length(); x++) {
+                            coordinatesObj = coordinatesArray.getJSONObject(x);
+                            location = new Location("");
+                            location.setLatitude(coordinatesObj.getDouble("lat"));
+                            location.setLongitude(coordinatesObj.getDouble("lng"));
+                            locationList.add(location);
+                        }
+                        providedRouteList.add(locationList);
+                        indexedRouteIdList.add(routeInstanceId);
+                        indexedRouteNameList.add(routeInstanceName);
+                        providedRouteArrayIndexes.add(i);
+                        if (providedRouteArrayIndexes.size() >= SessionUtility.MAX_SESSIONS_TO_EVALUATE) {
+                            // if size of list of valid sessions is ge 3, break loop.
+                            break;
+                        }
+                    }
+                }
+                progressBar.setVisibility(View.GONE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                toastMessage("Error analizando rutas similares");
+                providedRouteList.clear();
+                providedRouteArrayIndexes.clear();
+                progressBar.setVisibility(View.GONE);
+            }
+            // ask user if one of the routes in list was intended. Paint the route.
+            // ask for name for the route.
+            askIntendedRoute();
+
+        }
+    }
+
+
+
+    //-- Intended Route Asking Members and Methods --//
+
+    private ArrayList<ArrayList<Location>> providedRouteList = new ArrayList<>();
+    private int providedRouteIndex = -1;
+    private ArrayList<String> indexedRouteIdList = new ArrayList<>();
+    private ArrayList<String> indexedRouteNameList = new ArrayList<>();
+    private JSONArray providedRouteJsonArray;
+    private ArrayList<Integer> providedRouteArrayIndexes = new ArrayList<>();
+
+    private void askIntendedRoute() {
+        if (providedRouteList.size() > 0) { // if provided route list has at least one element.
+
+            providedRouteIndex = 0;
+            updateMarkers();
+
+            startButton.setVisibility(View.GONE);
+            yesButton.setVisibility(View.VISIBLE);
+            yesButton.setVisibility(View.VISIBLE);
+            intendedRouteQuestionTextView.setVisibility(View.VISIBLE);
+
+        } else {
+            postNewRoute();
+        }
+    }
+
+    // on click method
+    private void yesClick() {
+        postProvidedRoute();
+        providedRouteIndex = -1;
+    }
+
+    // on click method
+    private void noClick() {
+        if (providedRouteList.size() > (providedRouteIndex + 1)) {
+            providedRouteIndex++;
+            updateMarkers();
+        } else {
+            postNewRoute();
+            providedRouteIndex = -1;
+        }
+    }
+
+    private void postNewRoute() {
+        setRouteName();
+    }
+
+    private void postProvidedRoute() {
+        // set provided data to session json
+        try {
+            sessionJSON = getSessionJSON();
+            sessionJSON.put("RouteID", indexedRouteIdList.get(providedRouteIndex));
+            sessionJSON.put("RouteName", indexedRouteNameList.get(providedRouteIndex));
+            int index = providedRouteArrayIndexes.get(providedRouteIndex);
+            JSONObject routeInstance = providedRouteJsonArray.getJSONObject(index);
+            sessionJSON.put("Coordinates", routeInstance.getJSONArray("Coordinates"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        endPostPrep();
+    }
+
+    private void endPostPrep() {
+        yesButton.setVisibility(View.GONE);
+        yesButton.setVisibility(View.GONE);
+        intendedRouteQuestionTextView.setVisibility(View.GONE);
+        startButton.setVisibility(View.VISIBLE);
+
+        new PostResultsTask().execute();
+    }
+
+
+
+
+
+///////////////////////////////////////
+
 
 
 
@@ -1080,10 +1393,7 @@ public class MapsActivity extends AppCompatActivity implements
             } else {
                 toastMessage(msg);
             }
-
-
         }
-
     }
 
 }

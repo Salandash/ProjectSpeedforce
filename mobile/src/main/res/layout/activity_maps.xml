@@ -25,6 +25,14 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:background="?attr/colorPrimary"/>
 
+        <ProgressBar
+            android:id="@+id/progress_bar_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center|top"
+            android:visibility="gone" />
+
         <Chronometer
             android:id="@+id/chronometer_id"
             android:textColor="@color/colorPrimary"
@@ -34,6 +42,44 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
             android:layout_marginTop="50dp" />
+
+        <TextView
+            android:id="@+id/intended_route_question_textview_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="50dp"
+            android:textColor="@color/colorTextBlack"
+            android:visibility="gone"
+            android:text="@string/maps_textview_intended_route_question_string" />
+
+        <Button
+            android:id="@+id/no_button_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:paddingTop="10dp"
+            android:background="@color/colorDangerRed"
+            android:textColor="@color/colorTextWhite"
+            android:visibility="gone"
+            android:text="@string/maps_button_no_string" />
+
+        <Button
+            android:id="@+id/yes_button_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:paddingTop="10dp"
+            android:background="@color/colorSuccessBlue"
+            android:textColor="@color/colorTextWhite"
+            android:visibility="gone"
+            android:text="@string/maps_button_yes_string" />
 
         <Button
             android:id="@+id/start_button_id"

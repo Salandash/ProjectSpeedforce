@@ -71,6 +71,12 @@
         <item>Resistencia</item>
         <item>Velocidad</item>
     </string-array>
+    <string name="maps_textview_intended_route_question_string">¿Es ésta su ruta?</string>
+    <string name="maps_button_yes_string">Sí</string>
+    <string name="maps_button_no_string">No</string>
+    <string name="maps_button_accept_string">Aceptar</string>
+    <string name="maps_button_cancel_string">Cancelar</string>
+    <string name="maps_dialog_routename_title_string">Introduzca Nombre de Ruta</string>
 
     <!-- Navigation Drawer Strings -->
     <string name="drawer_open">Open navigation drawer</string>
