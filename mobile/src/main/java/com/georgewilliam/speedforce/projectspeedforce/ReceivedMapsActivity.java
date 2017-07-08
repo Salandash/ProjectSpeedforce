@@ -76,7 +76,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
 
-    private DatabaseHelper dbHelper;
+    //private DatabaseHelper dbHelper;
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private static final String START_WEAR_ACTIVITY = "/start_activity";
@@ -188,7 +188,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
 //        trainingType = extras.getString("TrainingTypeID");
 //        sessionStatus = extras.getString("SessionStatusID");
 
-        dbHelper = new DatabaseHelper(this, null, null, 1);
+        //dbHelper = new DatabaseHelper(this, null, null, 1);
         populateUserData();
         populateSessionData();
 
@@ -220,7 +220,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     }
 
     private void populateUserData() {
-        JSONObject json = dbHelper.getUser(userID);
+        JSONObject json = DatabaseHelper.getInstance(this).getUser(userID);
         String birthDate = "";
         try {
             weight = json.getDouble("Weight");
@@ -246,7 +246,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     }
 
     private void populateSessionData() {
-        JSONObject json = dbHelper.getSession(sessionID);
+        JSONObject json = DatabaseHelper.getInstance(this).getSession(sessionID);
         try {
             trainingType = json.getString("TrainingTypeID");
             country = json.getString("CountryName");
@@ -462,12 +462,19 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
+        Intent intent;
         switch(menuItem.getItemId()) {
-            case R.id.nav_training_id:
+            case R.id.nav_main_map_id:
                 finish();
                 break;
-            case R.id.nav_profile_id:
-                finish();
+            case R.id.nav_training_id:
+                break;
+            case R.id.nav_history_id:
+                intent = new Intent(this, HistoryActivity.class);
+                intent.putExtra("Username", userID);
+                startActivity(intent);
+                break;
+            case R.id.nav_logout_id:
                 break;
             default:
                 break;
@@ -759,7 +766,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
                     .show();
 
         }
-        dbHelper.updateSession(getSessionJSON());
+        DatabaseHelper.getInstance(this).updateSession(getSessionJSON());
 
         Intent intent = new Intent(this, ResultsActivity.class);
 

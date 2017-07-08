@@ -123,10 +123,10 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.nav_training_id:
+            case R.id.nav_main_map_id:
                 fragmentClass = ProfileFragment.class;
                 break;
-            case R.id.nav_profile_id:
+            case R.id.nav_training_id:
                 fragmentClass = ProfileEditFragment.class;
                 break;
 //            case R.id.nav_third_fragment:

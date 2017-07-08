@@ -15,6 +15,7 @@ import org.json.JSONObject;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "SFDB00.db";
+    private static final int DATABASE_VERSION = 1;
 
     private static final String USER_TABLE = "TB_USUARIOS";
     private static final String USER_USERNAME = "USUARIO";
@@ -37,6 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SESSION_CLIMATECONDITIONID = "CONDICIONCLIMATICA";
     private static final String SESSION_AVERAGEBPM = "RITMOCARDIACO";
     private static final String SESSION_ROUTEID = "RUTAID";
+    private static final String SESSION_ROUTENAME = "RUTANAME";
     private static final String SESSION_COORDINATES = "COORDENADAS";
     private static final String SESSION_CITYNAME = "CIUDAD";
     private static final String SESSION_COUNTRYNAME = "PAIS";
@@ -49,9 +51,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SESSION_TRAININGTYPEID = "TIPOENTRENAMIENTO";
     private static final String SESSION_SESSIONSTATUSID = "STATUS";
 
+    private static DatabaseHelper instance;
+
+    public static synchronized DatabaseHelper getInstance(Context context)
+    {
+        if (instance == null)
+            instance = new DatabaseHelper(context);
+
+        return instance;
+    }
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, version);
+        //"LocalDB03.db"
+    }
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
         //"LocalDB03.db"
     }
 
@@ -241,6 +257,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return json;
     }
 
+    public boolean localSessionExists() {
+
+        Cursor cursor = this.getReadableDatabase()
+                .rawQuery("SELECT * FROM " + SESSION_TABLE + " WHERE " + SESSION_SESSIONSTATUSID + "='Local';", null);
+
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+
+        cursor.close();
+        return true;
+    }
+
+    public JSONObject getSessionToUpload() {
+
+        Cursor cursor = this.getReadableDatabase()
+                .rawQuery("SELECT * FROM " + SESSION_TABLE + " WHERE " + SESSION_SESSIONSTATUSID + "='Local';", null);
+        cursor.moveToFirst();
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put("SessionID", cursor.getString(1));
+            json.put("UserID", cursor.getString(2));
+            json.put("ClimateConditionID", cursor.getString(3));
+            json.put("AverageBPM", cursor.getDouble(4));
+            json.put("RouteID", cursor.getString(5));
+            json.put("Coordinates", new JSONArray(cursor.getString(6)));
+            json.put("CityName", cursor.getString(7));
+            json.put("CountryName", cursor.getString(8));
+            json.put("StartTime", cursor.getString(9));
+            json.put("EndTime", cursor.getString(10));
+            json.put("Distance", cursor.getDouble(11));
+            json.put("BurntCalories", cursor.getDouble(12));
+            json.put("RelativeHumidity", cursor.getDouble(13));
+            json.put("Temperature", cursor.getDouble(14));
+            json.put("TrainingTypeID", cursor.getString(15));
+            json.put("SessionStatusID", cursor.getString(16));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSONException", "DatabaseHelper.getSession");
+        }
+
+        cursor.close();
+
+        return json;
+    }
+
+
     public JSONArray listSessions() {
         Cursor cursor = this.getReadableDatabase()
                 .rawQuery("SELECT * FROM " + SESSION_TABLE + " WHERE " + SESSION_SESSIONSTATUSID + "='Pendiente';", null);
@@ -305,6 +370,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.e("JSONException", "DatabaseHelper.updateSession");
         }
 
+    }
+
+    public void updateSessionStatusToSync(String sessionID) {
+        this.getWritableDatabase().execSQL("UPDATE " + SESSION_TABLE + " SET " + SESSION_SESSIONSTATUSID + "='Sincronizada' WHERE " + SESSION_SESSIONID + "='" + sessionID + "';");
     }
 
     public void deleteUser(String username) {

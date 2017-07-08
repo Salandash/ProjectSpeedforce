@@ -43,14 +43,14 @@ public class RegisterUserActivity extends AppCompatActivity {
     private String bikerType;
     //private String bike;
 
-    private DatabaseHelper dbHelper;
+    //private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_user);
 
-        dbHelper = new DatabaseHelper(this, null, null, 1);
+        //dbHelper = new DatabaseHelper(this, null, null, 1);
 
         Bundle extras = getIntent().getExtras();
         email = extras.getString("Email");
@@ -99,7 +99,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     public void login(String msg) {
 
         try {
-            dbHelper.insertUser(getUserJSON());
+            DatabaseHelper.getInstance(this).insertUser(getUserJSON());
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("JSONException", "RegisterUserActivity.login");

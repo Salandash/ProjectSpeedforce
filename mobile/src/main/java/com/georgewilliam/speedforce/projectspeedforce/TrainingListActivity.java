@@ -1,12 +1,21 @@
 package com.georgewilliam.speedforce.projectspeedforce;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,18 +29,40 @@ import java.util.UUID;
 public class TrainingListActivity extends AppCompatActivity {
 
     private ListView mList;
-    private DatabaseHelper dbHelper;
+    //private DatabaseHelper dbHelper;
     private String userID;
+
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+    private NavigationView nvDrawer;
+    // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
+    // The android.support.v4.app.ActionBarDrawerToggle has been deprecated.
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_list);
 
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = setupDrawerToggle();
+        // Tie DrawerLayout events to the ActionBarToggle
+        mDrawer.addDrawerListener(drawerToggle);
+
+        // Find our drawer view
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        // Setup drawer view
+        setupDrawerContent(nvDrawer);
+
         Bundle extras = getIntent().getExtras();
         userID = extras.getString("Username");
 
-        dbHelper = new DatabaseHelper(this, null, null, 1);
+        //dbHelper = new DatabaseHelper(this, null, null, 1);
 
         mList = (ListView) findViewById(R.id.traininglist_listview_id);
         
@@ -43,7 +74,7 @@ public class TrainingListActivity extends AppCompatActivity {
         // Crear lista de items
         //String[] items = {"Blue", "Green", "Purple", "Red"};
 
-        JSONArray array = dbHelper.listSessions();
+        JSONArray array = DatabaseHelper.getInstance(this).listSessions();
         ArrayList<String> sessions = new ArrayList<>();
 
         for (int i = 0; i < array.length(); i++) {
@@ -66,7 +97,6 @@ public class TrainingListActivity extends AppCompatActivity {
         mList.setAdapter(adapter);
     }
 
-
     private void registerClickCallback() {
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -88,6 +118,70 @@ public class TrainingListActivity extends AppCompatActivity {
         intent.putExtra("UserID", userID);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // `onPostCreate` called when activity start-up is complete after `onStart()`
+    // NOTE 1: Make sure to override the method with only a single `Bundle` argument
+    // Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
+    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        Intent intent;
+        switch(menuItem.getItemId()) {
+            case R.id.nav_main_map_id:
+                finish();
+                break;
+            case R.id.nav_training_id:
+                break;
+            case R.id.nav_history_id:
+                intent = new Intent(this, HistoryActivity.class);
+                intent.putExtra("Username", userID);
+                startActivity(intent);
+                break;
+            case R.id.nav_logout_id:
+                break;
+            default:
+                break;
+        }
+        mDrawer.closeDrawers();
     }
 
     private void toast(String message) {

@@ -4,6 +4,9 @@
  */
 package com.georgewilliam.speedforce.projectspeedforce;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -68,7 +71,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-//import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -96,7 +98,7 @@ public class MapsActivity extends AppCompatActivity implements
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
 
-    private DatabaseHelper dbHelper;
+    //private DatabaseHelper dbHelper;
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private static final String START_WEAR_ACTIVITY = "/start_activity";
@@ -187,6 +189,10 @@ public class MapsActivity extends AppCompatActivity implements
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_maps);
 
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getString("Username");
+        scheduleAlarm();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -199,10 +205,7 @@ public class MapsActivity extends AppCompatActivity implements
         buildGoogleApiClient();
         mGoogleApiClient.connect();
 
-        Bundle extras = getIntent().getExtras();
-        userID = extras.getString("Username");
-
-        dbHelper = new DatabaseHelper(this, null, null, 1);
+        //dbHelper = new DatabaseHelper(this, null, null, 1);
         populateUserData();
 
         chronometer = (Chronometer) findViewById(R.id.chronometer_id);
@@ -245,7 +248,7 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
     private void populateUserData() {
-        JSONObject json = dbHelper.getUser(userID);
+        JSONObject json = DatabaseHelper.getInstance(this).getUser(userID);
         Log.d("Loaded User Data", json.toString());
         String birthDate = "";
         try {
@@ -477,13 +480,21 @@ public class MapsActivity extends AppCompatActivity implements
     public void selectDrawerItem(MenuItem menuItem) {
         Intent intent;
         switch(menuItem.getItemId()) {
+            case R.id.nav_main_map_id:
+                break;
             case R.id.nav_training_id:
                 intent = new Intent(this, TrainingListActivity.class);
                 intent.putExtra("Username", userID);
                 startActivity(intent);
                 break;
-            case R.id.nav_profile_id:
-                new FetchSessionTask().execute();
+            case R.id.nav_history_id:
+                intent = new Intent(this, HistoryActivity.class);
+                intent.putExtra("Username", userID);
+                startActivity(intent);
+                break;
+            case R.id.nav_logout_id:
+                cancelAlarm();
+                finish();
                 break;
             default:
                 break;
@@ -665,6 +676,7 @@ public class MapsActivity extends AppCompatActivity implements
         sendMessageToWear(START_WEAR_ACTIVITY, "Session Started");
         sessionID = UUID.randomUUID().toString();
         distance = 0;
+        sessionStatus = "Local";
         fetchCityAndCountry();
         isInSession = true;
 
@@ -868,7 +880,7 @@ public class MapsActivity extends AppCompatActivity implements
                     Toast.LENGTH_LONG)
                     .show();
         }
-        dbHelper.insertSession(getSessionJSON());
+        DatabaseHelper.getInstance(this).insertSession(getSessionJSON());
 
         Intent intent = new Intent(this, ResultsActivity.class);
 
@@ -1332,6 +1344,35 @@ public class MapsActivity extends AppCompatActivity implements
 
 ///////////////////////////////////////
 
+    //-- Background Sync Service Members and Methods --//
+
+    // Setup a recurring alarm every half hour
+    public void scheduleAlarm() {
+        // Construct an intent that will execute the AlarmReceiver
+        Intent intent = new Intent(getApplicationContext(), StartServiceReceiver.class);
+        intent.putExtra("Username", userID);
+        // Create a PendingIntent to be triggered when the alarm goes off
+        final PendingIntent pIntent = PendingIntent.getBroadcast(this, StartServiceReceiver.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Setup periodic alarm every every half hour from this point onwards
+        long firstMillis = System.currentTimeMillis(); // alarm is set right away
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
+        // Interval can be INTERVAL_FIFTEEN_MINUTES, INTERVAL_HALF_HOUR, INTERVAL_HOUR, INTERVAL_DAY
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
+                (AlarmManager.INTERVAL_FIFTEEN_MINUTES/3), pIntent);
+        Log.d("AlarmManager", "Alarm set for SyncService.");
+    }
+
+    public void cancelAlarm() {
+        Intent intent = new Intent(getApplicationContext(), StartServiceReceiver.class);
+        final PendingIntent pIntent = PendingIntent.getBroadcast(this, StartServiceReceiver.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarm.cancel(pIntent);
+        Log.d("AlarmManager", "Alarm canceled.");
+    }
+
 
 
 
@@ -1382,7 +1423,7 @@ public class MapsActivity extends AppCompatActivity implements
             if (success) {
                 try {
                     JSONObject json = new JSONObject(response);
-                    dbHelper.insertSession(json);
+                    DatabaseHelper.getInstance(MapsActivity.this).insertSession(json);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.e("FetchSessionTaskERROR", "OnPostExecute.");

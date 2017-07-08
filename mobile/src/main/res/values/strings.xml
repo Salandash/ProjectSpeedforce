@@ -94,6 +94,13 @@
     <string name="results_button_accept_string">ACEPTAR</string>
     <string name="results_textview_unavailable_string">N/A</string>
 
+    <!-- Hamburger Menu Item Strings -->
+    <string name="menu_item_main_map_string">Mapa Principal</string>
+    <string name="menu_item_training_string">Entrenamiento</string>
+    <string name="menu_item_history_string">Historial</string>
+    <string name="menu_item_test_string">Test</string>
+    <string name="menu_item_logout_string">Logout</string>
+
     <!-- Other Strings -->
     <string name="title_activity_received_maps">Sesión de Entrenamiento</string>
 

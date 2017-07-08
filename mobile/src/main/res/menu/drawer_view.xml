@@ -2,16 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_training_id"
-            android:icon="@drawable/ic_one"
-            android:title="Entrenamiento" />
+            android:id="@+id/nav_main_map_id"
+            android:icon="@drawable/img_location_icon"
+            android:title="@string/menu_item_main_map_string" />
         <item
-            android:id="@+id/nav_profile_id"
-            android:icon="@drawable/ic_two"
-            android:title="Solicitar Sesión" />
-        <!--<item
-            android:id="@+id/nav_third_fragment"
-            android:icon="@drawable/ic_three"
-            android:title="Estadísticas" />-->
+            android:id="@+id/nav_training_id"
+            android:icon="@drawable/img_download_icon"
+            android:title="@string/menu_item_training_string" />
+        <item
+            android:id="@+id/nav_history_id"
+            android:icon="@drawable/img_history_icon"
+            android:title="@string/menu_item_history_string" />
+        <item
+            android:id="@+id/nav_logout_id"
+            android:icon="@drawable/img_power_icon"
+            android:title="@string/menu_item_logout_string" />
     </group>
 </menu>

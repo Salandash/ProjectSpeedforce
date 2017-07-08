@@ -40,11 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private String password;
 
-    DatabaseHelper dbHelper;
-
     private ProgressBar progressBar;
-
-    private TextView responseView;
 
     private ImageView imageViewIcon;
 
@@ -52,8 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        dbHelper = new DatabaseHelper(this, null, null, 1);
 
         editTextUsername = (EditText) findViewById(R.id.login_edittext_username_id);
         editTextPassword = (EditText) findViewById(R.id.login_edittext_password_id);
@@ -93,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                Log.d("Login", "Bypassing login process. Username: jojikun");
                 bypassMaps();
             }
         });
@@ -113,28 +108,12 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("message", msg);
         startActivity(intent);
         // when MapsActivity closes
-        finish();
+        //finish();
     }
-
-    /*//////
-    public void sendNotification() {
-        String toSend = "Login Activity Opened!!";
-        if(toSend.isEmpty())
-            toSend = "You sent an empty notification";
-        Notification notification = new NotificationCompat.Builder(getApplication())
-                .setSmallIcon(R.mipmap.img_logo)
-                .setContentTitle("Speedforce")
-                .setContentText(toSend)
-                .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
-                .build();
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplication());
-        int notificationId = 1;
-        notificationManager.notify(notificationId, notification);
-    }*/
 
     class SingInTask extends AsyncTask<Void, Void, String> {
 
-        private Exception exception;
+        //private Exception exception;
 
         protected void onPreExecute() {
             //progressBar.setVisibility(View.VISIBLE);
@@ -194,11 +173,8 @@ public class LoginActivity extends AppCompatActivity {
             if(response == null) {
                 response = "THERE WAS AN ERROR";
             }
-            //progressBar.setVisibility(View.GONE);
+
             Log.i("INFO", response);
-            //responseView.setText(response);
-            // TODO: check this.exception
-            // TODO: do something with the feed
 
             boolean authenticated = false;
             String msg = "No Hubo Mensaje...";
@@ -213,8 +189,11 @@ public class LoginActivity extends AppCompatActivity {
                 //msg = responseJSON.getString("message");
 
                 if (user != null && user.equals(username)) {
-                    if(!dbHelper.userExists(username)) {
-                        dbHelper.insertUser(responseJSON);
+//                    if(!dbHelper.userExists(username)) {
+//                        dbHelper.insertUser(responseJSON);
+//                    }
+                    if(!DatabaseHelper.getInstance(LoginActivity.this).userExists(username)) {
+                        DatabaseHelper.getInstance(LoginActivity.this).insertUser(responseJSON);
                     }
                     authenticated = true;
                     msg = "Login Exitoso";
@@ -253,16 +232,19 @@ public class LoginActivity extends AppCompatActivity {
             location = new JSONObject();
             location.put("lat", 18.4514340);
             location.put("lng", -69.9444650);
+            location.put("milestone", true);
             array.put(location);
 
             location = new JSONObject();
             location.put("lat", 18.4524980);
             location.put("lng", -69.9422170);
+            location.put("milestone", false);
             array.put(location);
 
             location = new JSONObject();
             location.put("lat", 18.4509970);
             location.put("lng", -69.9411820);
+            location.put("milestone", false);
             array.put(location);
 
             json.put("Username", "jojikun");
@@ -272,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("Name", "George");
             json.put("LastName", "García");
             json.put("Sex", "Masculino");
-            json.put("BirthDate", "12/24/1993");
+            json.put("BirthDate", "12/24/1991");
             json.put("CityName", "Santo Domingo");
             json.put("CountryName", "República Dominicana");
             json.put("TelephoneNumber", "809-534-5822");
@@ -285,6 +267,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("ClimateConditionID", "NA");
             json.put("AverageBPM", 0);
             json.put("RouteID", UUID.randomUUID().toString());//uu
+            json.put("RouteName", "TestRoute00");
             json.put("Coordinates", array);//arr
             json.put("StartTime", "NA");
             json.put("EndTime", "NA");
@@ -295,20 +278,26 @@ public class LoginActivity extends AppCompatActivity {
             json.put("TrainingTypeID", "Distancia");
             json.put("SessionStatusID", "Pendiente");
 
+            if (!DatabaseHelper.getInstance(this).userExists(json.getString("UserID"))) {
+                Log.d("TestInsert", "User does no exist. Inseting user.");
+                DatabaseHelper.getInstance(this).insertUser(json);
+                Toast.makeText(this, json.getJSONArray("Coordinates").toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            //DatabaseHelper.getInstance(this).insertSession(json);
+            Toast.makeText(this,json.getJSONArray("Coordinates").toString(), Toast.LENGTH_SHORT).show();
+
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("ExceptionJSON", "TEST INSERT FAILED.");
         }
 
-        //dbHelper.insertUser(json);
-        //dbHelper.insertSession(json);
-
-        try {
-            Toast.makeText(this,json.getJSONArray("Coordinates").toString(), Toast.LENGTH_SHORT).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.i("insertSampleData", "TEST INSERT SUCCESS?");
+//        try {
+//            Toast.makeText(this,json.getJSONArray("Coordinates").toString(), Toast.LENGTH_SHORT).show();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        Log.i("insertSampleData", "TEST INSERT SUCCESS?");
     }
 
 }

@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".SpeedforceApplication"
@@ -91,7 +91,13 @@
                     android:scheme="wear" />
             </intent-filter>
         </service>
+        <service
+            android:name=".SyncService"
+            android:exported="false" />
 
+        <receiver
+            android:name=".StartServiceReceiver"
+            android:process=":remote" />
         <receiver android:name=".NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -105,9 +111,10 @@
         <activity
             android:name=".TrainingListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ResultsActivity"
+        <activity
+            android:name=".ResultsActivity"
             android:screenOrientation="portrait" />
-
+        <activity android:name=".HistoryActivity"></activity>
     </application>
 
 </manifest>
