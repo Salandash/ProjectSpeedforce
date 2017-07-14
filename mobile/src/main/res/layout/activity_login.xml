@@ -95,6 +95,14 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/login_progressbar_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
     <!--<TextView
         android:id="@+id/login_textview_username_id"
         android:layout_width="wrap_content"

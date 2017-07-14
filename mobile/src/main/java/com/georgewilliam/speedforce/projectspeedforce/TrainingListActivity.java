@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class TrainingListActivity extends AppCompatActivity {
     private ListView mList;
     //private DatabaseHelper dbHelper;
     private String userID;
+    private JSONArray sessionsJSONArray;
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -74,12 +76,13 @@ public class TrainingListActivity extends AppCompatActivity {
         // Crear lista de items
         //String[] items = {"Blue", "Green", "Purple", "Red"};
 
-        JSONArray array = DatabaseHelper.getInstance(this).listSessions();
-        ArrayList<String> sessions = new ArrayList<>();
+        //JSONArray array = DatabaseHelper.getInstance(this).listSessions();
+        sessionsJSONArray = DatabaseHelper.getInstance(this).listSessions(userID);
+        ArrayList<String> routeNames = new ArrayList<>();
 
-        for (int i = 0; i < array.length(); i++) {
+        for (int i = 0; i < sessionsJSONArray.length(); i++) {
             try {
-                sessions.add(array.getJSONObject(i).getString("SessionID"));
+                routeNames.add(sessionsJSONArray.getJSONObject(i).getString("RouteName") + "  " +sessionsJSONArray.getJSONObject(i).getString("SessionID"));
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("JSONException", "TrainingListActivity.populateListView");
@@ -90,7 +93,7 @@ public class TrainingListActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 R.layout.training_list_item,
-                sessions
+                routeNames
         );
 
         // Configurar el ListView
@@ -106,9 +109,24 @@ public class TrainingListActivity extends AppCompatActivity {
                 String message = "Item:" + textView.getText().toString() + " id:" + Long.toString(id);
                 //toast(message);
 
-                startSessionActivity(textView.getText().toString());
+                //startSessionActivity(textView.getText().toString());
+                startSessionActivity(i);
             }
         });
+    }
+
+    private void startSessionActivity(int index) {
+        try {
+            JSONObject session = sessionsJSONArray.getJSONObject(index);
+            Intent intent = new Intent(this, ReceivedMapsActivity.class);
+            intent.putExtra("SessionID", session.getString("SessionID"));
+            intent.putExtra("UserID", userID);
+            startActivity(intent);
+            finish();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSONException", "TrainingListActivity.startSessionActivity");
+        }
     }
 
     private void startSessionActivity(String sessionID) {

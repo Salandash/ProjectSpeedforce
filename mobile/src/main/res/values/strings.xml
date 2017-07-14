@@ -95,8 +95,8 @@
     <string name="results_textview_unavailable_string">N/A</string>
 
     <!-- Hamburger Menu Item Strings -->
-    <string name="menu_item_main_map_string">Mapa Principal</string>
-    <string name="menu_item_training_string">Entrenamiento</string>
+    <string name="menu_item_main_map_string">Entrenamiento</string>
+    <string name="menu_item_training_string">Sesiones Recibidas</string>
     <string name="menu_item_history_string">Historial</string>
     <string name="menu_item_test_string">Test</string>
     <string name="menu_item_logout_string">Logout</string>

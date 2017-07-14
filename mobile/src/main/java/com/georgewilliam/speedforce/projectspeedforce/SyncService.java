@@ -32,11 +32,11 @@ public class SyncService extends IntentService {
         //final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         Log.d("SyncService", "Intent Username: " + userID);
-        if (DatabaseHelper.getInstance(this).userExists(userID)) {
-            Log.d("SyncService", "UserExists in database!");
-        }
+//        if (DatabaseHelper.getInstance(this).userExists(userID)) {
+//            Log.d("SyncService", "UserExists in database!");
+//        }
 
-        /*
+
 
         // Fetch Sessions in Background
         new Thread( new Runnable() {
@@ -72,6 +72,21 @@ public class SyncService extends IntentService {
                     Log.d("Sync - FetchSession", "RESPONSE: " + response);
                     try {
                         JSONObject json = new JSONObject(response);
+                        String status = json.getString("SessionStatusID");
+                        if (!status.equals("Pendiente")) {
+                            Log.d("Sync - FetchSession", "CORRUPTED STATUS: " + status + ". Changing to -> Pendiente");
+                            json.put("SessionStatusID", "Pendiente");
+                        }
+                        String country = json.getString("CountryName");
+                        if (country.equals("null")) {
+                            Log.d("Sync - FetchSession", "NULL COUNTRY: " + country + ". Changing to -> República Dominicana");
+                            json.put("CountryName", "República Dominicana");
+                        }
+                        String city = json.getString("CityName");
+                        if (city.equals("null")) {
+                            Log.d("Sync - FetchSession", "NULL CITY: " + city + ". Changing to -> Santo Domingo");
+                            json.put("CityName", "Santo Domingo");
+                        }
                         DatabaseHelper.getInstance(SyncService.this).insertSession(json);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -89,7 +104,7 @@ public class SyncService extends IntentService {
                 JSONObject sessionJSON = new JSONObject();
                 // only do upload http request if local sessions exists
                 if(DatabaseHelper.getInstance(SyncService.this).localSessionExists()) {
-
+                    Log.i("SyncService", "Local Session exists in database. Attempting to upload.");
                     try {
                         final String API_URL = "http://speedforceservice.azurewebsites.net/api/training/logsession";
                         URL url = new URL(API_URL);
@@ -132,6 +147,7 @@ public class SyncService extends IntentService {
                     } else {
                         Log.d("Sync - UploadSession", "RESPONSE: " + response);
                         try {
+                            Log.i("SyncService", "Local Session Uploaded. Attempting to update Session Status in database.");
                             DatabaseHelper.getInstance(SyncService.this).updateSessionStatusToSync(sessionJSON.getString("SessionID"));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -143,8 +159,6 @@ public class SyncService extends IntentService {
 
             }
         }).start();
-
-        */
 
 //        // Fetch Sessions in Background
 //        new Thread( new Runnable() {

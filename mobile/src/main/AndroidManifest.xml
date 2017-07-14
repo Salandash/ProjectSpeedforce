@@ -114,7 +114,9 @@
         <activity
             android:name=".ResultsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".HistoryActivity"></activity>
+        <activity
+            android:name=".HistoryActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

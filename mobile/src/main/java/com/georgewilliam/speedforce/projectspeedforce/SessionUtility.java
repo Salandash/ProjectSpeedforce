@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by georgetamate on 5/30/17.
@@ -16,6 +17,7 @@ public class SessionUtility {
     public static final double MAX_HAUSDORFF_DISTANCE = 10;
     public static final double MIN_MILESTONE_DISTANCE = 20;
     public static final int MAX_SESSIONS_TO_EVALUATE = 3;
+    private static final int DEFAULT_AGE = 30;
 
     private static double distanceFromClosest(JSONObject coordinates, JSONArray route) {
         double shortest = MAX_HAUSDORFF_DISTANCE + 1;
@@ -92,6 +94,43 @@ public class SessionUtility {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static int getAgeFromDateString(String dateStr) {
+        if (dateStr.contains("T")) {
+            return getAgeFromTDate(dateStr);
+        } else if (dateStr.contains("/")) {
+            return getAgeFromSlashDate(dateStr);
+        } else {
+            return DEFAULT_AGE;
+        }
+    }
+
+    private static int getAgeFromSlashDate(String dateStr) {
+        // month / day / year
+        String[] date = dateStr.split("/", 3);
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+        dob.set(Integer.parseInt(date[2]), Integer.parseInt(date[0]), Integer.parseInt(date[1]));
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        return age;
+    }
+
+    private static int getAgeFromTDate(String dateStr) {
+        // year - month - day T hourOfTheDay : minute : second
+        String[] dateTime = dateStr.split("T", 2);
+        String[] date = dateTime[0].split("-", 3);
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+        dob.set(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        return age;
     }
 
     public ArrayList<Coordinates> ParseRoute(JSONArray route) {

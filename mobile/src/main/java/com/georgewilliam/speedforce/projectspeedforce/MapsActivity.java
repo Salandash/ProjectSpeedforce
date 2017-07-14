@@ -154,10 +154,10 @@ public class MapsActivity extends AppCompatActivity implements
     private String climateCondition = "Desconocido";
     private double averageBPM = -1;
     private String routeID; //uuid
-    private String routeName = "";
+    private String routeName = "NO NAME";
     private JSONArray coordinates;
-    private String city = "Desconocido";
-    private String country = "Desconocido";
+    private String city = "Santo Domingo";
+    private String country = "República Dominicana";
     private String startTime;
     private String endTime;
     private double distance;
@@ -261,18 +261,21 @@ public class MapsActivity extends AppCompatActivity implements
             Log.e("JSONException", "MapsActivity.populateUserData");
         }
 
-        String[] date = birthDate.split("/", 3);
+//        String[] date = birthDate.split("/", 3);
+//
+//        Calendar dob = Calendar.getInstance();
+//        Calendar today = Calendar.getInstance();
+//
+//        dob.set(Integer.parseInt(date[2]), Integer.parseInt(date[0]), Integer.parseInt(date[1]));
+//
+//        age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+//
+//        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+//            age--;
+//        }
 
-        Calendar dob = Calendar.getInstance();
-        Calendar today = Calendar.getInstance();
-
-        dob.set(Integer.parseInt(date[2]), Integer.parseInt(date[0]), Integer.parseInt(date[1]));
-
-        age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
+        age = SessionUtility.getAgeFromDateString(birthDate);
+        Log.d("User Age", "AGE: " + Integer.toString(age));
     }
 
     /**
@@ -875,6 +878,7 @@ public class MapsActivity extends AppCompatActivity implements
             sessionStatus = "Sincronizada";
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         } else {
+            sessionStatus = "Local";
             Toast.makeText(this,
                     "No se pudo conectar con servicio.", //+ Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM()),
                     Toast.LENGTH_LONG)
@@ -1052,7 +1056,9 @@ public class MapsActivity extends AppCompatActivity implements
 
                 //sessionJSON = getSessionJSON();
                 Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
+                sessionJSON.put("SessionStatusID", "Sincronizada");
                 String requestBody = sessionJSON.toString();
+                sessionJSON.put("SessionStatusID", sessionStatus);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {

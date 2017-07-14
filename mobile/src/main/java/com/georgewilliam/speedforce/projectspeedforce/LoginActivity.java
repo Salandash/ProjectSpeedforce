@@ -2,6 +2,7 @@ package com.georgewilliam.speedforce.projectspeedforce;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.SignInButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +57,9 @@ public class LoginActivity extends AppCompatActivity {
         buttonSignIn = (Button) findViewById(R.id.login_button_signin_id);
         textViewRegister = (TextView) findViewById(R.id.login_textview_create_account_id);
         imageViewIcon = (ImageView) findViewById(R.id.login_imageview_icon_id);
+
+        progressBar = (ProgressBar) findViewById(R.id.login_progressbar_id);
+        progressBar.setVisibility(View.GONE);
 
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
 
@@ -106,25 +112,26 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("Username", username);
         intent.putExtra("message", msg);
+        progressBar.setVisibility(View.GONE);
         startActivity(intent);
+        buttonSignIn.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorSuccessBlue));
+        buttonSignIn.setEnabled(true);
+
         // when MapsActivity closes
         //finish();
     }
 
     class SingInTask extends AsyncTask<Void, Void, String> {
 
-        //private Exception exception;
-
         protected void onPreExecute() {
-            //progressBar.setVisibility(View.VISIBLE);
+            buttonSignIn.setEnabled(false);
+            buttonSignIn.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorDisabledBlue));
+            progressBar.setVisibility(View.VISIBLE);
             //responseView.setText("");
         }
 
         protected String doInBackground(Void... urls) {
-            // Do some validation here
-
             try {
-                //final String API_URL = String.valueOf(R.string.ngrok_url);
                 final String API_URL = "http://speedforceservice.azurewebsites.net/api/users/loginA";
                 //final String API_URL = "http://9805f273.ngrok.io/api/speedforce/users/loginA";
                 URL url = new URL(API_URL);
@@ -179,19 +186,15 @@ public class LoginActivity extends AppCompatActivity {
             boolean authenticated = false;
             String msg = "No Hubo Mensaje...";
             String user = null;
+            boolean onlineSuccess = false;
 
             JSONObject responseJSON;
             Log.d("Login User Response", response);
             try {
                 responseJSON = new JSONObject(response);
-                //authenticated = responseJSON.getBoolean("success");
                 user = responseJSON.getString("Username");
-                //msg = responseJSON.getString("message");
 
                 if (user != null && user.equals(username)) {
-//                    if(!dbHelper.userExists(username)) {
-//                        dbHelper.insertUser(responseJSON);
-//                    }
                     if(!DatabaseHelper.getInstance(LoginActivity.this).userExists(username)) {
                         DatabaseHelper.getInstance(LoginActivity.this).insertUser(responseJSON);
                     }
@@ -200,17 +203,49 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     msg = "Login Fallido";
                 }
+                onlineSuccess = true;
             } catch (JSONException e) {
                 e.printStackTrace();
-                msg = "Login Fallido";
             }
 
-            toastResponse(msg);
-
-            if (authenticated) {
-                login(msg);
+            if (onlineSuccess) {
+                toastResponse(msg);
+                if (authenticated) {
+                    login(msg);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    buttonSignIn.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorSuccessBlue));
+                    buttonSignIn.setEnabled(true);
+                }
+            } else {
+                Log.d("Login", "Attempting Offline Login");
+                if(DatabaseHelper.getInstance(LoginActivity.this).userExists(username)) {
+                    responseJSON = DatabaseHelper.getInstance(LoginActivity.this).getUser(username);
+                    Log.d("Login", "Retrieved Local User: " + responseJSON);
+                    try {
+                        if(responseJSON.getString("Password").equals(password)) {
+                            authenticated = true;
+                            msg = "Login Exitoso (Offline)";
+                        } else {
+                            msg = "Login Fallido (Offline)";
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                        Log.d("Login", "Offline Login Failed");
+                    }
+                } else {
+                    Log.d("Login", "Local User does not exist in DB.");
+                    msg = "Login Fallido (Offline)";
+                }
+                toastResponse(msg);
+                if (authenticated) {
+                    login(msg);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    buttonSignIn.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorSuccessBlue));
+                    buttonSignIn.setEnabled(true);
+                }
             }
-
         }
     }
 
@@ -298,6 +333,7 @@ public class LoginActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 //        Log.i("insertSampleData", "TEST INSERT SUCCESS?");
+
     }
 
 }

@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "SFDB00.db";
+    private static final String DATABASE_NAME = "SFDB02.db";
     private static final int DATABASE_VERSION = 1;
 
     private static final String USER_TABLE = "TB_USUARIOS";
@@ -31,6 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String USER_HEIGHT = "ALTURA";
     private static final String USER_WEIGHT = "PESO";
     private static final String USER_BIKERTYPE = "CICLISTA";
+    private static final String USER_LOGGED = "ESTADOUSUARIO";
 
     private static final String SESSION_TABLE = "TB_SESIONES";
     private static final String SESSION_SESSIONID = "SESIONID";
@@ -50,6 +51,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SESSION_TEMPERATURE = "TEMPERATURA";
     private static final String SESSION_TRAININGTYPEID = "TIPOENTRENAMIENTO";
     private static final String SESSION_SESSIONSTATUSID = "STATUS";
+
+    private static final int INTEGER_TRUE = 1;
+    private static final int INTEGER_FALSE = 0;
 
     private static DatabaseHelper instance;
 
@@ -87,7 +91,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + USER_TELEPHONE + " TEXT, " // 10
                 + USER_HEIGHT + " REAL, " // 11
                 + USER_WEIGHT + " REAL, " // 12
-                + USER_BIKERTYPE + " TEXT);" // 13
+                + USER_BIKERTYPE + " TEXT, " // 13
+                + USER_LOGGED + " INTEGER DEFAULT 0);" // 14
         );
 
         sqLiteDatabase.execSQL("CREATE TABLE " + SESSION_TABLE + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " // 0
@@ -96,17 +101,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + SESSION_CLIMATECONDITIONID + " TEXT, " // 3
                 + SESSION_AVERAGEBPM + " REAL, " // 4
                 + SESSION_ROUTEID + " TEXT, " // 5
-                + SESSION_COORDINATES + " TEXT, " // 6
-                + SESSION_CITYNAME + " TEXT, " // 7
-                + SESSION_COUNTRYNAME + " TEXT, " // 8
-                + SESSION_STARTTIME + " TEXT, " // 9
-                + SESSION_ENDTIME + " TEXT, " // 10
-                + SESSION_DISTANCE + " REAL, " // 11
-                + SESSION_BURNTCALORIES + " REAL, " // 12
-                + SESSION_RELATIVEHUMIDITY + " REAL, " // 13
-                + SESSION_TEMPERATURE + " REAL, " // 14
-                + SESSION_TRAININGTYPEID + " TEXT, " // 15
-                + SESSION_SESSIONSTATUSID + " TEXT);" // 16
+                + SESSION_ROUTENAME + " TEXT, " // 6
+                + SESSION_COORDINATES + " TEXT, " // 7
+                + SESSION_CITYNAME + " TEXT, " // 8
+                + SESSION_COUNTRYNAME + " TEXT, " // 9
+                + SESSION_STARTTIME + " TEXT, " // 10
+                + SESSION_ENDTIME + " TEXT, " // 11
+                + SESSION_DISTANCE + " REAL, " // 12
+                + SESSION_BURNTCALORIES + " REAL, " // 13
+                + SESSION_RELATIVEHUMIDITY + " REAL, " // 14
+                + SESSION_TEMPERATURE + " REAL, " // 15
+                + SESSION_TRAININGTYPEID + " TEXT, " // 16
+                + SESSION_SESSIONSTATUSID + " TEXT);" // 17
         );
     }
 
@@ -142,7 +148,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.e("JSONException", "DatabaseHelper.insertUser");
         }
 
-
         this.getWritableDatabase().insertOrThrow(USER_TABLE, "", contentValues);
     }
 
@@ -156,6 +161,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(SESSION_CLIMATECONDITIONID, json.getString("ClimateConditionID"));
             contentValues.put(SESSION_AVERAGEBPM, json.getDouble("AverageBPM"));
             contentValues.put(SESSION_ROUTEID, json.getString("RouteID"));
+            contentValues.put(SESSION_ROUTENAME, json.getString("RouteName"));
             contentValues.put(SESSION_COORDINATES, json.getJSONArray("Coordinates").toString());
             contentValues.put(SESSION_CITYNAME, json.getString("CityName"));
             contentValues.put(SESSION_COUNTRYNAME, json.getString("CountryName"));
@@ -171,7 +177,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             Log.e("JSONException", "DatabaseHelper.insertSession");
         }
-
 
         this.getWritableDatabase().insertOrThrow(SESSION_TABLE, "", contentValues);
     }
@@ -236,17 +241,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             json.put("ClimateConditionID", cursor.getString(3));
             json.put("AverageBPM", cursor.getDouble(4));
             json.put("RouteID", cursor.getString(5));
-            json.put("Coordinates", new JSONArray(cursor.getString(6)));
-            json.put("CityName", cursor.getString(7));
-            json.put("CountryName", cursor.getString(8));
-            json.put("StartTime", cursor.getString(9));
-            json.put("EndTime", cursor.getString(10));
-            json.put("Distance", cursor.getDouble(11));
-            json.put("BurntCalories", cursor.getDouble(12));
-            json.put("RelativeHumidity", cursor.getDouble(13));
-            json.put("Temperature", cursor.getDouble(14));
-            json.put("TrainingTypeID", cursor.getString(15));
-            json.put("SessionStatusID", cursor.getString(16));
+            json.put("RouteName", cursor.getString(6));
+            json.put("Coordinates", new JSONArray(cursor.getString(7)));
+            json.put("CityName", cursor.getString(8));
+            json.put("CountryName", cursor.getString(9));
+            json.put("StartTime", cursor.getString(10));
+            json.put("EndTime", cursor.getString(11));
+            json.put("Distance", cursor.getDouble(12));
+            json.put("BurntCalories", cursor.getDouble(13));
+            json.put("RelativeHumidity", cursor.getDouble(14));
+            json.put("Temperature", cursor.getDouble(15));
+            json.put("TrainingTypeID", cursor.getString(16));
+            json.put("SessionStatusID", cursor.getString(17));
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("JSONException", "DatabaseHelper.getSession");
@@ -284,17 +290,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             json.put("ClimateConditionID", cursor.getString(3));
             json.put("AverageBPM", cursor.getDouble(4));
             json.put("RouteID", cursor.getString(5));
-            json.put("Coordinates", new JSONArray(cursor.getString(6)));
-            json.put("CityName", cursor.getString(7));
-            json.put("CountryName", cursor.getString(8));
-            json.put("StartTime", cursor.getString(9));
-            json.put("EndTime", cursor.getString(10));
-            json.put("Distance", cursor.getDouble(11));
-            json.put("BurntCalories", cursor.getDouble(12));
-            json.put("RelativeHumidity", cursor.getDouble(13));
-            json.put("Temperature", cursor.getDouble(14));
-            json.put("TrainingTypeID", cursor.getString(15));
-            json.put("SessionStatusID", cursor.getString(16));
+            json.put("RouteName", cursor.getString(6));
+            json.put("Coordinates", new JSONArray(cursor.getString(7)));
+            json.put("CityName", cursor.getString(8));
+            json.put("CountryName", cursor.getString(9));
+            json.put("StartTime", cursor.getString(10));
+            json.put("EndTime", cursor.getString(11));
+            json.put("Distance", cursor.getDouble(12));
+            json.put("BurntCalories", cursor.getDouble(13));
+            json.put("RelativeHumidity", cursor.getDouble(14));
+            json.put("Temperature", cursor.getDouble(15));
+            json.put("TrainingTypeID", cursor.getString(16));
+            //json.put("SessionStatusID", cursor.getString(17));
+            json.put("SessionStatusID", "Sincronizada");
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("JSONException", "DatabaseHelper.getSession");
@@ -306,9 +314,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public JSONArray listSessions() {
+    public JSONArray listSessions(String userID) {
         Cursor cursor = this.getReadableDatabase()
-                .rawQuery("SELECT * FROM " + SESSION_TABLE + " WHERE " + SESSION_SESSIONSTATUSID + "='Pendiente';", null);
+                .rawQuery("SELECT * FROM " + SESSION_TABLE + " WHERE " + SESSION_SESSIONSTATUSID + "='Pendiente' AND " + SESSION_USERID + "='" + userID + "';", null);
 
         JSONArray jsonArray = new JSONArray();
         JSONObject json;
@@ -316,7 +324,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while(cursor.moveToNext()) {
                 json = new JSONObject();
                 json.put("SessionID", cursor.getString(1));
-                json.put("TrainingTypeID", cursor.getString(15));
+                json.put("TrainingTypeID", cursor.getString(16));
+                if (cursor.getString(6) != null && !cursor.getString(6).equals("null") && !cursor.getString(6).equals("")) {
+                    json.put("RouteName", cursor.getString(6));
+                } else {
+                    json.put("RouteName","NO NAME");
+                }
                 jsonArray.put(json);
             }
         } catch (JSONException e) {
@@ -369,7 +382,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             Log.e("JSONException", "DatabaseHelper.updateSession");
         }
-
     }
 
     public void updateSessionStatusToSync(String sessionID) {
@@ -382,6 +394,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteSession(String sessionID) {
         this.getWritableDatabase().delete(SESSION_TABLE, SESSION_SESSIONID + "='" + sessionID + "'", null);
+    }
+
+    public void logSessions() {
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SESSION_TABLE, null);
+        JSONObject json;
+        //JSONObject route;
+        JSONArray coordinates;
+        int i = 0;
+        Log.i("LOG SESSION", "Start Logging all Sessions in Local DB.");
+        try {
+            while(cursor.moveToNext()) {
+                i++;
+
+                json = new JSONObject();
+                //route = new JSONObject();
+
+                json.put("SessionID", cursor.getString(1));
+                json.put("UserID", cursor.getString(2));
+                json.put("ClimateConditionID", cursor.getString(3));
+                json.put("AverageBPM", cursor.getDouble(4));
+                json.put("RouteID", cursor.getString(5));
+                json.put("RouteName", cursor.getString(6));
+                //json.put("Coordinates", new JSONArray(cursor.getString(7)));
+                json.put("CityName", cursor.getString(8));
+                json.put("CountryName", cursor.getString(9));
+                json.put("StartTime", cursor.getString(10));
+                json.put("EndTime", cursor.getString(11));
+                json.put("Distance", cursor.getDouble(12));
+                json.put("BurntCalories", cursor.getDouble(13));
+                json.put("RelativeHumidity", cursor.getDouble(14));
+                json.put("Temperature", cursor.getDouble(15));
+                json.put("TrainingTypeID", cursor.getString(16));
+                json.put("SessionStatusID", cursor.getString(17));
+
+                //route.put("RouteID", cursor.getString(5));
+                //route.put("Coordinates", new JSONArray(cursor.getString(7)));
+
+                //coordinates = new JSONArray(cursor.getString(7));
+
+                Log.i("LOG SESSION", "JSON Session #"+ Integer.toString(i) + " -> " + json.toString());
+//                Log.i("LogS #" + Integer.toString(i), json.toString());
+//                //Log.i("LogC" + Integer.toString(i), route.toString());
+//                if (i == 10 || i == 12 || i == 13) {
+//                    Log.i("LogN" + Integer.toString(i), "Number of coordinates: " + Integer.toString(coordinates.length()));
+//                    for (int index = 0; index < coordinates.length(); index++) {
+//                        Log.i("LogC", coordinates.getJSONObject(index).toString());
+//                    }
+//                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSONException", "DatabaseHelper.listSessions");
+        }
+        Log.i("LOG SESSION", "All Local DB Sessions Logged!");
+
+        cursor.close();
     }
 
 }

@@ -43,6 +43,7 @@ public class HistoryActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
 
         new FetchHistoryTask().execute();
+        new LogSessionsTask().execute();
     }
 
     private void populateListView(JSONArray array) {
@@ -130,6 +131,13 @@ public class HistoryActivity extends AppCompatActivity {
 
     private Calendar dateStringToCalendar(String dateStr) {
 
+        if (dateStr.contains(".")) {
+            dateStr = dateStr.split(".", 2)[0];
+        }
+        if (dateStr.contains(" ")) {
+            dateStr = dateStr.replace(" ", "T");
+        }
+
         String[] dateTime = dateStr.split("T", 2);
         String[] date = dateTime[0].split("-", 3);
         String[] time = dateTime[1].split(":", 3);
@@ -194,6 +202,20 @@ public class HistoryActivity extends AppCompatActivity {
                 }
             }
             progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    class LogSessionsTask extends AsyncTask<Void, Void, String> {
+        protected void onPreExecute() {
+            Log.d("LogSessionTask", "Starting Background Log Task.");
+        }
+        protected String doInBackground(Void... urls) {
+            DatabaseHelper.getInstance(HistoryActivity.this).logSessions();
+            return "Background Session Logging Finished";
+        }
+        protected void onPostExecute(String msg) {
+            Log.d("LogSessionTask", msg);
+            Log.d("LogSessionTask", "Ending Log Task.");
         }
     }
 }

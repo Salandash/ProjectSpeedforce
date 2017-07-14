@@ -133,10 +133,11 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
     private String userID = "PlaceHolderUser";
     private String climateCondition = "Desconocido";
     private double averageBPM = -1;
-    private String routeID; //uuid
+    private String routeID;
+    private String routeName = "NO NAME";
     private JSONArray coordinates;
-    private String city = "Desconocido";
-    private String country = "Desconocido";
+    private String city = "Santo Domingo";
+    private String country = "República Dominicana";
     //coordenadas
     private String startTime;
     private String endTime;
@@ -228,21 +229,11 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
             birthDate = json.getString("BirthDate");
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("JSONException", "MapsActivity.populateUserData");
+            Log.e("JSONException", "ReceivedMapsActivity.populateUserData");
         }
 
-        String[] date = birthDate.split("/", 3);
-
-        Calendar dob = Calendar.getInstance();
-        Calendar today = Calendar.getInstance();
-
-        dob.set(Integer.parseInt(date[2]), Integer.parseInt(date[0]), Integer.parseInt(date[1]));
-
-        age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
+        age = SessionUtility.getAgeFromDateString(birthDate);
+        Log.d("User Age", "AGE: " + Integer.toString(age));
     }
 
     private void populateSessionData() {
@@ -252,6 +243,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
             country = json.getString("CountryName");
             city = json.getString("CityName");
             routeID = json.getString("RouteID");
+            routeName = json.getString("RouteName");
             JSONArray array = json.getJSONArray("Coordinates");
             JSONObject obj;
             Location location;
@@ -721,6 +713,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
             jsonObj.put("ClimateConditionID", climateCondition);
             jsonObj.put("AverageBPM", averageBPM);
             jsonObj.put("RouteID", routeID);
+            jsonObj.put("RouteName", routeName);
             jsonObj.put("Coordinates", coordinates);
             jsonObj.put("CityName", city);
             jsonObj.put("CountryName", country);
@@ -760,6 +753,7 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
             sessionStatus = "Sincronizada";
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         } else {
+            sessionStatus = "Local";
             Toast.makeText(this,
                     "No se pudo conectar con servicio.", //+ Double.toString(((SpeedforceApplication) this.getApplication()).getAverageBPM()),
                     Toast.LENGTH_LONG)
@@ -936,7 +930,9 @@ public class ReceivedMapsActivity extends AppCompatActivity implements
 
                 sessionJSON = getSessionJSON();
                 Log.d("JSON", "Session in JSON: " + sessionJSON.toString());
+                sessionJSON.put("SessionStatusID", "Sincronizada");
                 String requestBody = sessionJSON.toString();
+                sessionJSON.put("SessionStatusID", sessionStatus);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {

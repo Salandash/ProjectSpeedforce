@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#F2B307</color>
     <color name="colorAccent">#E53935</color>
     <color name="colorSuccessBlue">#2196F3</color>
+    <color name="colorDisabledBlue">#ADDFFF</color>
     <color name="colorDangerRed">#FF5252</color>
     <color name="colorTextWhite">#FFFFFF</color>
     <color name="colorTextGray">#C2C2C2</color>
