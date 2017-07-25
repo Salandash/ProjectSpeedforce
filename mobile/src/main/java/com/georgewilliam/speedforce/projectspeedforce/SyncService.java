@@ -149,12 +149,15 @@ public class SyncService extends IntentService {
                         try {
                             Log.i("SyncService", "Local Session Uploaded. Attempting to update Session Status in database.");
                             DatabaseHelper.getInstance(SyncService.this).updateSessionStatusToSync(sessionJSON.getString("SessionID"));
+                            Log.i("SyncService", "Local Session Status Updated.");
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e("Sync - UploadSession", "Could not update session status");
                         }
                     }
 
+                } else {
+                    Log.i("SyncService", "No Local Session in database to upload.");
                 }
 
             }

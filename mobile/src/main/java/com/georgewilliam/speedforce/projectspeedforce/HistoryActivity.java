@@ -129,16 +129,30 @@ public class HistoryActivity extends AppCompatActivity {
         return (finishTime.getTimeInMillis() - startTime.getTimeInMillis());
     }
 
-    private Calendar dateStringToCalendar(String dateStr) {
+    private Calendar dateStringToCalendar(String dateStr0) {
 
-        if (dateStr.contains(".")) {
-            dateStr = dateStr.split(".", 2)[0];
-        }
+        Log.d("Calendar", "dateStr0: " + dateStr0);
+
+        String dateStr = dateStr0.substring(0, Math.min(dateStr0.length(), 19));
+
+        Log.d("Calendar", "dateStr: " + dateStr);
+
+//        if (dateStr.contains(".")) {
+//            Log.d("Calendar", "dateStr Has period: " + dateStr);
+//            String[] noPeriod = dateStr.split(".", 2);
+//            Log.d("Calendar", "noPeriod: " + noPeriod[0]);
+//            dateStr = noPeriod[0];
+//            Log.d("Calendar", "period removed: " + dateStr);
+//        }
         if (dateStr.contains(" ")) {
+            Log.d("Calendar", "dateStr Has WS: " + dateStr);
             dateStr = dateStr.replace(" ", "T");
+            Log.d("Calendar", "WS replaced with T: " + dateStr);
         }
 
         String[] dateTime = dateStr.split("T", 2);
+        Log.d("Calendar", "dateTime[0]: " + dateTime[0]);
+        Log.d("Calendar", "dateTime[1]: " + dateTime[1]);
         String[] date = dateTime[0].split("-", 3);
         String[] time = dateTime[1].split(":", 3);
 

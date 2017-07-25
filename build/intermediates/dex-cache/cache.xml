@@ -201,7 +201,7 @@
         jar="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/mobile/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         revision="24.0.1"
-        sha1="8a03898bc04427ee27439f06ac3f53b6a5fbcf67">
+        sha1="6109b14ea9319e192ad6bde7d196a649e72955be">
         <dex dex="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/mobile/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_f03612c9950be08f1fabc40e98ea60be3c2eb6c8/classes.dex" />
     </item>
     <item
@@ -362,7 +362,7 @@
         jar="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/mobile/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         revision="24.0.1"
-        sha1="ac89d351d1111dc63598eccaa9bd54cfa4b94dc1">
+        sha1="2e85443c9be2cf1b37b8be7861a22bb9db7d7d54">
         <dex dex="/Users/georgetamate/AndroidStudioProjects/ProjectSpeedforce/mobile/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_51654defdf06b5f191549db026efed4c61dfc412/classes.dex" />
     </item>
     <item
